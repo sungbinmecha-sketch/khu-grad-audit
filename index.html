@@ -2738,6 +2738,14 @@
   <script type="module">
     (function () {
       const CFG_KEY = "khu_me_grad_audit_firebase_cfg";
+      const DEFAULT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyBmhG37PBSL4hfDs8s9U7BDBXq8yi5McVI",
+        authDomain: "my-personal-apps-e1a9d.firebaseapp.com",
+        projectId: "my-personal-apps-e1a9d",
+        storageBucket: "my-personal-apps-e1a9d.firebasestorage.app",
+        messagingSenderId: "294650940413",
+        appId: "1:294650940413:web:3e1878df5bb193c9a02794"
+      };
       const badge = document.getElementById("cloudSyncBadge");
       const badgeText = document.getElementById("cloudSyncText");
       const btnAuth = document.getElementById("btnCloudAuth");
@@ -2764,10 +2772,9 @@
       function loadConfig() {
         try {
           const raw = localStorage.getItem(CFG_KEY);
-          return raw ? JSON.parse(raw) : null;
-        } catch (e) {
-          return null;
-        }
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return DEFAULT_FIREBASE_CONFIG;
       }
 
       function saveConfig(cfg) {
