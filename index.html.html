@@ -1,0 +1,2680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>경희대학교 기계공학부 졸업사정 자가진단 & 학점 관리</title>
+  <style>
+    :root {
+      --khu-red: #9a1d2d;
+      --khu-red-dark: #7a1421;
+      --khu-red-soft: #fdf2f4;
+      --khu-navy: #1e293b;
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --done: #059669;
+      --done-bg: #dcfce7;
+      --done-border: #34d399;
+      --plan: #2563eb;
+      --plan-bg: #dbeafe;
+      --plan-border: #60a5fa;
+      --none: #64748b;
+      --none-bg: #ffffff;
+      --none-border: #e2e8f0;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --radius: 10px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--khu-red), var(--khu-red-dark));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--khu-navy);
+    }
+
+    .brand-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .topbar-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sem-picker {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--khu-navy);
+    }
+
+    .sem-picker select {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 5px;
+      padding: 2px 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--khu-red);
+      cursor: pointer;
+    }
+
+    .seg-toggle {
+      display: inline-flex;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .seg-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .seg-btn.active {
+      background: var(--khu-red);
+      color: #fff;
+    }
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: var(--surface-alt); }
+    .btn-primary { background: var(--khu-red); color: #fff; border-color: var(--khu-red); }
+    .btn-primary:hover { background: var(--khu-red-dark); }
+    .btn-danger { color: var(--danger); border-color: #fecaca; background: var(--danger-bg); }
+    .btn-sm { padding: 4px 8px; font-size: 11.5px; }
+
+    /* Container */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 16px 18px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Dashboard Summary */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-card.highlight { border-top: 3px solid var(--khu-red); }
+    .kpi-card.sem-card { border-top: 3px solid var(--plan); }
+
+    .kpi-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .kpi-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-main {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--khu-navy);
+    }
+
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .kpi-split {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-top: 4px;
+      border-top: 1px dashed var(--border);
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .text-done { color: var(--done) !important; }
+    .text-plan { color: var(--plan) !important; }
+    .text-warn { color: var(--warn) !important; }
+    .text-danger { color: var(--danger) !important; }
+
+    .progress-track {
+      position: relative;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-plan {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: #93c5fd;
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    .progress-done {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--done);
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    /* Panel */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--khu-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .area-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .area-box.met {
+      border-color: var(--done-border);
+      background: #f0fdf4;
+    }
+
+    .area-box-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .area-name { font-size: 12.5px; font-weight: 700; color: var(--khu-navy); }
+
+    .area-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge-ok { background: var(--done-bg); color: var(--done); }
+    .badge-plan { background: var(--plan-bg); color: var(--plan); }
+    .badge-lack { background: #ffedd5; color: #c2410c; }
+
+    .area-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .info-banner {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--khu-red-soft);
+      border: 1px solid #f5d0d6;
+      font-size: 11.5px;
+      color: #6b1521;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Core 8 Major Courses Tracker Bar */
+    .core8-bar {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11.5px;
+    }
+
+    .core8-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .core8-pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-muted);
+    }
+
+    .core8-pill.done { background: var(--done-bg); border-color: var(--done-border); color: #065f46; }
+    .core8-pill.plan { background: var(--plan-bg); border-color: var(--plan-border); color: #1e40af; }
+
+    /* Checklist */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .req-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      background: var(--surface-alt);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .req-card.passed {
+      border-color: var(--done-border);
+      background: #f0fdf4;
+    }
+
+    .req-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .req-title { font-size: 12px; font-weight: 700; color: var(--khu-navy); }
+    .req-desc { font-size: 11px; color: var(--text-muted); }
+
+    .req-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: auto;
+    }
+
+    .req-select {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface);
+      font-size: 11px;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-pill input { accent-color: var(--done); cursor: pointer; }
+
+    /* Toolbar */
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cat-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .cat-tab {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .cat-tab.active {
+      background: var(--khu-navy);
+      color: #fff;
+      border-color: var(--khu-navy);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-alt);
+      font-size: 12.5px;
+    }
+
+    .filter-select {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-alt);
+      font-size: 12px;
+    }
+
+    .guide-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .guide-none { background: #fff; border: 1px solid var(--border); color: var(--text-muted); }
+    .guide-done { background: var(--done-bg); border: 1px solid var(--done-border); color: #065f46; }
+    .guide-plan { background: var(--plan-bg); border: 1px solid var(--plan-border); color: #1e40af; }
+    .guide-legacy { background: #fffbeb; border: 1px dashed #f59e0b; color: #92400e; }
+
+    /* Category Section */
+    .category-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cat-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cat-title-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cat-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--khu-navy);
+    }
+
+    .cat-req-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--khu-red);
+      background: var(--khu-red-soft);
+      border: 1px solid #f5d0d6;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .cat-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .subarea-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .subarea-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: #f1f5f9;
+      border-left: 3px solid var(--khu-navy);
+      border-radius: 4px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .subarea-title.met {
+      background: #ecfdf5;
+      border-left-color: var(--done);
+      color: #065f46;
+    }
+
+    /* 4~6 Column Course Grid with Uniform Fixed Height Cards */
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 1280px) {
+      .course-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 980px) {
+      .course-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .area-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .checklist-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .course-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .area-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .checklist-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Fixed-Height Course Tile (No Layout Shift on Click) */
+    .course-card {
+      position: relative;
+      border: 1px solid var(--none-border);
+      border-radius: var(--radius-sm);
+      padding: 9px 10px;
+      background: var(--none-bg);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 82px;
+      gap: 6px;
+      transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .course-card:hover {
+      border-color: #94a3b8;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+    }
+
+    /* Legacy / Renamed / Discontinued Course Distinction */
+    .course-card.is-legacy {
+      border-style: dashed;
+      border-color: #cbd5e1;
+      background: #fafafa;
+    }
+
+    .course-card.status-done {
+      background: var(--done-bg);
+      border-color: var(--done-border);
+      border-style: solid;
+    }
+
+    .course-card.status-plan {
+      background: var(--plan-bg);
+      border-color: var(--plan-border);
+      border-style: solid;
+    }
+
+    .course-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .course-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .course-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      word-break: keep-all;
+    }
+
+    .course-card.status-none .course-name {
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .course-card.status-done .course-name {
+      color: #064e3b;
+      font-weight: 700;
+    }
+
+    .course-card.status-plan .course-name {
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    .course-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    .c-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      line-height: 1.3;
+    }
+
+    .c-tag.closed { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .c-tag.renamed { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .c-tag.shifted { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .c-tag.core8 { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .c-tag.new26 { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+
+    .del-x {
+      opacity: 0;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1;
+      padding: 1px 3px;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .course-card:hover .del-x { opacity: 1; }
+    .del-x:hover { color: var(--danger); background: rgba(220, 38, 38, 0.1); }
+
+    /* Bottom Slot Always Reserves Space so Height Never Jumps */
+    .course-bottom-slot {
+      min-height: 26px;
+      display: flex;
+      align-items: center;
+    }
+
+    .course-inline-inputs {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding-top: 4px;
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .mini-input {
+      width: 36px;
+      padding: 2px 3px;
+      border: 1px solid rgba(15, 23, 42, 0.18);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.92);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .mini-select {
+      flex: 1;
+      min-width: 0;
+      padding: 2px 2px;
+      border: 1px solid rgba(15, 23, 42, 0.18);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.92);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .mini-sem {
+      width: 44px;
+      padding: 2px 1px;
+      border: 1px solid rgba(15, 23, 42, 0.18);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.92);
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .mini-flag {
+      border: 1px solid rgba(15, 23, 42, 0.15);
+      background: rgba(255, 255, 255, 0.8);
+      color: #64748b;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .mini-flag.active {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #f59e0b;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 420px;
+      padding: 18px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title { font-size: 15px; font-weight: 700; color: var(--khu-navy); }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); }
+    .form-field input, .form-field select {
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12.5px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: var(--khu-navy);
+      color: #fff;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 70;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .empty-state {
+      padding: 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">KHU</div>
+        <div>
+          <div class="brand-title">경희대 기계공학부 졸업사정 자가진단</div>
+          <div class="brand-sub">ABEEK 비인증 일반과정 · 22/26학번 교육과정 및 개편/폐지 과목 통합</div>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <div class="sem-picker" title="현재 이수 완료(또는 재학 중)인 학기와 학기당 기준 학점을 설정합니다">
+          <span>현재 학기</span>
+          <select id="selCurrentSem" aria-label="현재 학기 선택">
+            <option value="1">1-1 (1학기)</option>
+            <option value="2">1-2 (2학기)</option>
+            <option value="3">2-1 (3학기)</option>
+            <option value="4">2-2 (4학기)</option>
+            <option value="5">3-1 (5학기)</option>
+            <option value="6">3-2 (6학기)</option>
+            <option value="7">4-1 (7학기)</option>
+            <option value="8">4-2 (8학기)</option>
+            <option value="9">초과학기 (9학기+)</option>
+          </select>
+          <span>· 학기당</span>
+          <select id="selMaxPerSem" aria-label="학기당 기준 학점">
+            <option value="18">18학점</option>
+            <option value="19">19학점</option>
+            <option value="21">21학점(성적우수)</option>
+            <option value="15">15학점</option>
+          </select>
+        </div>
+
+        <div class="seg-toggle" role="group" aria-label="교육과정 기준 선택">
+          <button type="button" class="seg-btn active" id="btnCurr2022" data-curr="2022">2022학번 교육과정</button>
+          <button type="button" class="seg-btn" id="btnCurr2026" data-curr="2026">2026학번 교육과정</button>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn" id="btnExport">JSON 백업</button>
+          <button type="button" class="btn" id="btnImport">복원</button>
+          <input type="file" id="fileImport" accept="application/json,.json" hidden />
+          <button type="button" class="btn btn-danger" id="btnReset">초기화</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Top KPI Dashboard (5 Cards including Semester & Surplus Credits) -->
+    <section class="dashboard-grid" aria-label="실시간 학점, 학기 및 평점 요약">
+      <div class="kpi-card highlight">
+        <div class="kpi-label">
+          <span>총 졸업학점 달성률</span>
+          <span id="kpiTotalBadge" class="area-badge badge-lack">확인중</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-main" id="kpiTotalDone">0</span>
+          <span class="kpi-sub">/ <span id="kpiTotalReq">130</span> 학점</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-plan" id="barTotalPlan" style="width:0%"></div>
+          <div class="progress-done" id="barTotalDone" style="width:0%"></div>
+        </div>
+        <div class="kpi-split">
+          <span>희망 포함: <strong class="text-plan" id="kpiTotalWithPlan">0</strong>학점</span>
+          <span>부족: <strong id="kpiTotalRemain">130</strong>학점</span>
+        </div>
+      </div>
+
+      <div class="kpi-card sem-card">
+        <div class="kpi-label">
+          <span>잔여 학기 & 잉여 학점 여유</span>
+          <span id="kpiSemLabel" class="area-badge badge-plan">잔여 2학기</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-main" id="kpiAvgPerSem">0.0</span>
+          <span class="kpi-sub">학점/학기 필요</span>
+        </div>
+        <div class="kpi-split">
+          <span>수강가능 총량: <strong id="kpiMaxAvailCr">36</strong>학점</span>
+          <span>잉여 여유: <strong id="kpiSurplusCr" class="text-done">+36</strong>학점</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>전체 평점 평균 (GPA)</span>
+          <span>4.30 만점</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-main" id="kpiAllGpaDone">0.00</span>
+          <span class="kpi-sub" id="kpiAllGpaCredits">(0학점)</span>
+        </div>
+        <div class="kpi-split">
+          <span>희망 포함: <strong class="text-plan" id="kpiAllGpaPlan">0.00</strong></span>
+          <span id="kpiMinGpaStatus">기준 1.70+</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>전공 평점 (기초+필수+선택)</span>
+          <span>4.30 만점</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-main" id="kpiMajorGpaDone">0.00</span>
+          <span class="kpi-sub" id="kpiMajorGpaCredits">(0학점)</span>
+        </div>
+        <div class="kpi-split">
+          <span>희망 포함: <strong class="text-plan" id="kpiMajorGpaPlan">0.00</strong></span>
+          <span>전공학점: <strong id="kpiMajorTotalDone">0</strong>/<span id="kpiMajorTotalReq">85</span></span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>졸업사정 종합 판정</span>
+          <span id="kpiCurrLabel">2022학번 기준</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-main" id="kpiOverallStatus" style="font-size:18px;">진단 중</span>
+        </div>
+        <div class="kpi-split">
+          <span>학점요건: <strong id="kpiCreditStatus">미충족</strong></span>
+          <span>특화요건: <strong id="kpiSpecStatus">미충족</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Area Breakdown -->
+    <section class="panel" aria-label="영역별 학점 현황">
+      <div class="panel-header">
+        <div class="panel-title">영역별 이수 학점 요약</div>
+        <div class="legend">
+          <span class="guide-chip guide-none">미수강 (클릭→완료)</span>
+          <span class="guide-chip guide-done">수강완료 (클릭→희망)</span>
+          <span class="guide-chip guide-plan">수강희망 (클릭→미수강)</span>
+          <span class="guide-chip guide-legacy">점선 테두리 = 개편·명칭변경·폐지 과목 (졸업사정 정상 합산)</span>
+          <label class="check-pill">
+            <input type="checkbox" id="chkExcessToElec" checked />
+            <span>전필 초과학점 → 전선 자동인정</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" id="chkBigBangSub" />
+            <span>미적분/물리1 → 빅뱅에서문명까지(3) 대체인정</span>
+          </label>
+        </div>
+      </div>
+      <div class="area-grid" id="areaGrid"></div>
+      <div class="core8-bar" id="core8Bar"></div>
+      <div class="info-banner" id="curriculumBanner"></div>
+    </section>
+
+    <!-- Special Graduation Requirements Checklist -->
+    <section class="panel" aria-label="기계공학부 특화 졸업요건 체크리스트">
+      <div class="panel-header">
+        <div class="panel-title">기계공학부 졸업 필수 특화요건 체크리스트</div>
+        <span class="kpi-sub" id="specSummaryText">0 / 5 충족</span>
+      </div>
+      <div class="checklist-grid" id="checklistGrid"></div>
+    </section>
+
+    <!-- Filter & Category Tabs -->
+    <section class="toolbar" aria-label="과목 필터 및 검색">
+      <div class="cat-tabs" id="catTabs"></div>
+      <div class="filter-row">
+        <input type="text" class="search-input" id="searchInput" placeholder="과목명 빠른 검색 (예: 정역학, 기초공학설계, 디자인사고, 열역학, 파이썬)..." />
+        <select class="filter-select" id="statusFilter" aria-label="이수 상태 필터">
+          <option value="all">상태: 전체 보기</option>
+          <option value="none">미수강 과목만</option>
+          <option value="done">수강완료 과목만</option>
+          <option value="plan">수강희망 과목만</option>
+          <option value="legacy">개편·변경·폐지 과목만</option>
+        </select>
+        <select class="filter-select" id="semFilter" aria-label="이수 학기 필터">
+          <option value="all">학기: 전체</option>
+          <option value="1-1">1-1 수강과목</option>
+          <option value="1-2">1-2 수강과목</option>
+          <option value="2-1">2-1 수강과목</option>
+          <option value="2-2">2-2 수강과목</option>
+          <option value="3-1">3-1 수강과목</option>
+          <option value="3-2">3-2 수강과목</option>
+          <option value="4-1">4-1 수강과목</option>
+          <option value="4-2">4-2 수강과목</option>
+          <option value="계절">계절/기타</option>
+        </select>
+        <label class="check-pill">
+          <input type="checkbox" id="engOnlyFilter" />
+          <span>영어강의(ENG)만</span>
+        </label>
+        <button type="button" class="btn btn-primary" id="btnQuickAdd">+ 과목 직접 추가</button>
+      </div>
+    </section>
+
+    <!-- Course Categories Container -->
+    <div id="courseSections" style="display:flex; flex-direction:column; gap:14px;"></div>
+  </main>
+
+  <!-- Add/Edit Course Modal -->
+  <div class="modal-backdrop" id="courseModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="courseModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="courseModalTitle">과목 추가</h2>
+        <button type="button" class="btn btn-sm" id="btnCloseCourseModal">닫기</button>
+      </div>
+      <form id="courseForm">
+        <input type="hidden" id="editCourseId" />
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="fName">과목명 *</label>
+            <input type="text" id="fName" required placeholder="과목명을 입력하세요" />
+          </div>
+          <div class="form-field">
+            <label for="fCategory">영역 *</label>
+            <select id="fCategory" required>
+              <option value="req_ge">필수교양 (중핵·글쓰기·영어·배분)</option>
+              <option value="free_ge">자유이수 교양</option>
+              <option value="major_basic">전공기초 (MSC)</option>
+              <option value="major_req">전공필수</option>
+              <option value="major_elec">전공선택</option>
+              <option value="gen_elec">일반선택 (자유선택)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fSubgroup">세부영역 (교양 구분)</label>
+            <select id="fSubgroup">
+              <option value="">기본 분류</option>
+              <option value="core">필수교과 (문명·글쓰기·영어)</option>
+              <option value="dist1">배분 1영역 (생명·우주·인간)</option>
+              <option value="dist2">배분 2영역 (분석·추론·논리)</option>
+              <option value="dist3">배분 3영역 (상징·문화·소통)</option>
+              <option value="dist4">배분 4영역 (사회·공동체·평화)</option>
+              <option value="dist5">배분 5영역 (지능·정보·미래)</option>
+              <option value="free_sw">자유이수 (SW·AI)</option>
+              <option value="free_art">자유이수 (예술·체육·외국어·일반)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fCredits">학점 *</label>
+            <input type="number" id="fCredits" min="0" max="12" step="0.5" value="3" required />
+          </div>
+          <div class="form-field">
+            <label for="fStatus">초기 상태</label>
+            <select id="fStatus">
+              <option value="done">수강완료</option>
+              <option value="plan">수강희망(예정)</option>
+              <option value="none">미수강</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="fGrade">성적</label>
+            <select id="fGrade"></select>
+          </div>
+          <div class="form-field" style="justify-content:flex-end;">
+            <label class="check-pill"><input type="checkbox" id="fIsEng" /> 영어강의(ENG)</label>
+          </div>
+          <input type="hidden" id="fCode" value="" />
+          <input type="hidden" id="fNote" value="" />
+          <input type="checkbox" id="fIsSw" hidden />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="btnCancelCourseModal">취소</button>
+          <button type="submit" class="btn btn-primary">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div class="modal-backdrop" id="resetModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle">
+    <div class="modal" style="max-width:360px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="resetModalTitle">데이터 초기화</h2>
+      </div>
+      <p style="font-size:12.5px; color:var(--text-muted);">
+        입력한 모든 수강 상태, 학점, 성적, 사용자 추가 과목이 초기화됩니다. 계속할까요?
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="btnCancelReset">취소</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmReset">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const STORAGE_KEY = "khu_me_grad_audit_v3";
+
+      const GRADES = [
+        { value: "A+", label: "A+", point: 4.3, pass: true, gpa: true },
+        { value: "A0", label: "A0", point: 4.0, pass: true, gpa: true },
+        { value: "B+", label: "B+", point: 3.3, pass: true, gpa: true },
+        { value: "B0", label: "B0", point: 3.0, pass: true, gpa: true },
+        { value: "C+", label: "C+", point: 2.3, pass: true, gpa: true },
+        { value: "C0", label: "C0", point: 2.0, pass: true, gpa: true },
+        { value: "D+", label: "D+", point: 1.3, pass: true, gpa: true },
+        { value: "D0", label: "D0", point: 1.0, pass: true, gpa: true },
+        { value: "F",  label: "F",  point: 0.0, pass: false, gpa: true },
+        { value: "P",  label: "P",  point: null, pass: true, gpa: false },
+        { value: "NP", label: "NP", point: null, pass: false, gpa: false }
+      ];
+
+      const SEM_OPTIONS = ["-", "1-1", "1-2", "2-1", "2-2", "3-1", "3-2", "4-1", "4-2", "계절"];
+
+      const GRADE_MAP = Object.fromEntries(GRADES.map(g => [g.value, g]));
+
+      const CURRICULA = {
+        "2022": {
+          name: "2022학번 교육과정 (기계공학과 비인증 단일전공)",
+          totalReq: 130,
+          geReq: 29,
+          geCoreReq: 17,
+          geDistAreasReq: 3,
+          geDistCoursesReq: 3,
+          geDistCreditsReq: 9,
+          geFreeReq: 3,
+          geMax: 50,
+          majorBasicReq: 21,
+          majorBasicCourses: 7,
+          majorReqReq: 19,
+          majorReqCourses: 8,
+          majorElecReq: 45,
+          majorElecCourses: 15,
+          majorTotalReq: 85,
+          genElecHint: 16,
+          bannerText: "2022학번 기준: 총 130학점 = 교양 29학점+(필수 17 + 배분 3영역 9+ + 자유 3+) + 전공 85학점+(전공기초 7과목 21 + 전공필수 8과목 19 + 전공선택 45+) + 일반선택 잔여학점. 개편/폐지 과목(정역학, 구 기초공학설계 등)도 기이수 시 졸업사정 학점에 100% 정상 반영됩니다."
+        },
+        "2026": {
+          name: "2026학번 개편 교육과정 (기계공학부 비인증 단일전공)",
+          totalReq: 130,
+          geReq: 29,
+          geCoreReq: 17,
+          geDistAreasReq: 3,
+          geDistCoursesReq: 3,
+          geDistCreditsReq: 9,
+          geFreeReq: 3,
+          geMax: 50,
+          majorBasicReq: 18,
+          majorBasicCourses: 6,
+          majorReqReq: 9,
+          majorReqCourses: 3,
+          majorElecReq: 52,
+          majorElecCourses: 18,
+          majorTotalReq: 79,
+          genElecHint: 22,
+          bannerText: "2026학번 개편 기준: 총 130학점 = 교양 29학점+ + 전공 79학점+(전공기초 6과목 18 + 전공필수 3과목 9 + 전공선택 52+) + 일반선택/부전공·마이크로디그리 잔여학점. 구 교육과정에서 이수한 전필 초과분(19-9=10학점)은 전공선택 학점으로 자동 이월 인정됩니다."
+        }
+      };
+
+      const CATEGORIES = [
+        { id: "req_ge", label: "필수교양 (중핵·기초·배분이수)" },
+        { id: "free_ge", label: "자유이수 교양 (일반교양)" },
+        { id: "major_basic", label: "전공기초 (MSC)" },
+        { id: "major_req", label: "전공필수" },
+        { id: "major_elec", label: "전공선택" },
+        { id: "gen_elec", label: "일반선택 (자유선택)" }
+      ];
+
+      function makeCourses() {
+        const list = [];
+        const add = (id, cat, name, credits = 3, sub = "", grade = "A0", isSw = false, meta = {}) => {
+          list.push({
+            id, cat, name, credits, sub,
+            status: "none",
+            grade,
+            sem: meta.sem || "-",
+            isEng: false,
+            isSw,
+            changeType: meta.changeType || "", // 'closed' | 'renamed' | 'shifted' | 'new26'
+            changeBadge: meta.changeBadge || "",
+            core8: !!meta.core8
+          });
+        };
+
+        // 1. 필수교과 (문명전개의 지구적 문맥 3과목 9학점 + 글쓰기 2과목 6학점 + 대학영어 2학점 = 6과목 17학점)
+        add("c_hum1", "req_ge", "인간의 가치 탐색", 3, "core", "A0", false, { sem: "1-1" });
+        add("c_hum2", "req_ge", "세계와 시민 (구 우리가 사는 세계)", 3, "core", "A0", false, {
+          sem: "1-2", changeType: "renamed", changeBadge: "명칭통합 (구 우리가사는세계)"
+        });
+        add("c_hum3", "req_ge", "빅뱅에서 문명까지", 3, "core", "A0", false, { sem: "1-2" });
+        add("c_wrt1", "req_ge", "성찰과 표현 (구 글쓰기1)", 3, "core", "A0", false, {
+          sem: "1-1", changeType: "renamed", changeBadge: "개편 (구 글쓰기1)"
+        });
+        add("c_wrt2", "req_ge", "주제연구 (구 글쓰기2)", 3, "core", "A0", false, {
+          sem: "2-1", changeType: "renamed", changeBadge: "개편 (구 글쓰기2)"
+        });
+        add("c_eng",  "req_ge", "대학영어", 2, "core", "A0", false, { sem: "1-1" });
+
+        // 배분이수 1영역: 생명·우주·인간
+        const dist1Names = [
+          "마음의 탄생: 뇌, 의식, 마음", "만성질병과 건강관리", "몸과 생명", "몸의 발견",
+          "문명, 감염 그리고 진화", "불편한 진실: 기후변화", "생명, 영원한 블루오션",
+          "생명과 생명공학: 자본,국가,과학,정치", "생명의 그물망: 인간,동식물,환경,지구",
+          "생명의 역사 35억년: 세포의 춤", "생명이란 무엇인가: 물질과 정보의 이중주",
+          "숨겨진 패턴", "숲과 생활", "스마트 식생활과 건강", "스포츠 경쟁력과 자기계발",
+          "우주: 별을 잊은 그대에게", "운동과 건강", "원자의 춤", "인간행동의 이해: 심리학",
+          "인체와 생명", "전기와 자기의 만남", "진화와 인간본성", "질병의 진화적 이해",
+          "짝짓기의 진화심리학", "폭력의 진화: 통섭적 관점", "하천문화의 이해와 르네상스",
+          "건강한 노화", "고령화 사회의 뇌 이야기", "공생: 세포에서 사회까지", "긍정심리학",
+          "뇌 속의 나: 인식의 해부학", "사람 뇌의 이해", "생태독성학 퍼즐의 비밀",
+          "약과 건강", "에코토피아", "위기의 생태계와 미래", "의생명과학 속 위대한 발견과 미래",
+          "인간과 식물", "인간관계의 생명론", "캠퍼스 식물의 이해", "행복의 생명과학적 이해",
+          "환경과 건강", "고전읽기: 이기적 유전자 vs 생명의 음악", "고전읽기: 종의 기원",
+          "고전읽기: 침묵의 봄", "고전읽기: 코스모스"
+        ];
+        dist1Names.forEach((n, i) => add(`d1_${i}`, "req_ge", n, 3, "dist1"));
+
+        // 배분이수 2영역: 분석·추론·논리
+        const dist2Names = [
+          "고양이의 물리학: 자연계의 숨은 법칙", "고전읽기: 유클리드 원론", "공학기초수학",
+          "기술혁신과 전략의 융합", "기초미분적분학", "동양사상과 과학기술",
+          "동의보감을 통한 몸과 마음의 이해", "롤러코스터의 과학: 퍼텐셜", "무한의 힘",
+          "설득의 기술", "세상 속의 수학", "수학과 세상", "예측하는 미래: 통계와 확률",
+          "이성의 함정: 마음은 항상 합리적인가", "창의적 사고기법 실습",
+          "큰 맥락에서 사고하기: 시스템다이나믹스", "통계의 진실과 오류", "특허와 지적재산권",
+          "프로그래밍을 통한 논리적 사유연습", "현대사회와 과학", "고전읽기: 과학혁명의 구조",
+          "고전읽기: 부분과 전체", "고전읽기: 비트겐슈타인", "고전읽기: 아리스토텔레스",
+          "과학시간에 물어보고 싶었지만 묻지 못했던 질문들", "과학적 사고란 무엇인가",
+          "모두를 위한 물리학", "비판적 사고란 무엇인가", "사고와 논리: 개념, 명제, 논증",
+          "생각과 앎의 힘", "수와 문명: 문명을 바꾼 수학적 발견", "시민과학: 과학하는 시민",
+          "인류의 큰 걸음: 과학사의 위대한 발견들", "제논의 역설에서 카오스 이론까지",
+          "질적연구와 데이터분석", "철학자를 위한 물리학", "통합적 사고론"
+        ];
+        dist2Names.forEach((n, i) => add(`d2_${i}`, "req_ge", n, 3, "dist2", "A0", n.includes("프로그래밍")));
+
+        // 배분이수 3영역: 상징·문화·소통
+        const dist3Names = [
+          "가면의 축제: 동서양 연희의 문명사", "고전과 여성", "고전명작과 예술의 문명사",
+          "고전읽기: 그리스 비극", "고전읽기: 노자 장자", "고전읽기: 논어", "고전읽기: 박경리 토지",
+          "고전읽기: 불경", "고전읽기: 성서", "고전읽기: 셰익스피어", "고전읽기: 프로이트",
+          "고전읽기: 황순원", "공감의 인류학: 감정이입과 의인화", "과학 예술 문화의 만남",
+          "국화와 칼: 만들어진 일본의 전통", "그리스 신화와 철학", "그림 속의 인문학",
+          "근대의 시선과 공간: 뮤지엄과 엑스포", "글, 그림 그리고 문화콘텐츠", "글로벌 라틴아메리카",
+          "라틴아메리카 문학과 예술", "라틴어와 서구문명", "매체와 메시지: 미디어의 이해",
+          "명작에 취하다: 예술감상법", "미디어아트와 문화", "불교와 정신분석학", "삼국지 인문학",
+          "수사학과 영작문", "실크로드와 누들로드", "악기의 탄생: 동서양 음악의 문명사",
+          "언어와 문학의 이해", "언어의 신비를 찾아서", "여행을 통한 인간의 삶의 가치 증진",
+          "영화로 보는 스포츠 문화", "영화와 문학", "예술치료의 원리와 실제",
+          "음식과 문화: 글로벌&로컬 트렌드", "의미의 탄생: 언어", "인문학과 문화콘텐츠",
+          "지구화 시대의 미학극장", "커뮤니케이션과 디자인", "패션디자인의 세계", "하이쿠의 세계",
+          "한국고전문학과 영상", "고전읽기: 김수영", "고전읽기: 꿈의 해석", "고전읽기: 나쓰메 소세키",
+          "고전읽기: 루쉰", "고전읽기: 무라카미 하루키", "고전읽기: 박지원", "고전읽기: 보르헤스",
+          "고전읽기: 사르트르", "고전읽기: 삼국유사", "고전읽기: 차라투스트라는 이렇게 말했다",
+          "고전읽기: 카뮈", "고전읽기: 카프카", "고전읽기: 톨스토이", "동양고전수필의 향기",
+          "르네상스: 예술의 혁명", "상징, 은유, 반어: 복잡성의 시학", "소셜네트워크: 소통과 집단지성",
+          "시는 어떻게 내게로 오는가", "신화와 문화: 동서양", "언어와 비언어: 이미지, 상징, 아이콘",
+          "영미문학읽기: 소설과 영화 가로지르기", "우리 문화유전자 읽기", "천개의 공감: 현대인의 심리분석",
+          "한국문학과 세계문학", "한국문화의 이해", "호모무지쿠스: 음악으로 경계 넘나들기"
+        ];
+        dist3Names.forEach((n, i) => add(`d3_${i}`, "req_ge", n, 3, "dist3"));
+
+        // 배분이수 4영역: 사회·공동체·평화
+        const dist4Names = [
+          "21세기 금융세계화와 불평등", "On Justice", "SDG5 성평등", "개인의 탄생: 시공간의 재편",
+          "경제학적 사유의 원리", "고전읽기: 칼 세이건", "관계를 읽는 시간", "국가폭력과 트라우마",
+          "다이나믹 한국근현대사", "대중문화 속의 페미니즘", "대학생을 위한 실용금융", "도덕의 과학",
+          "동아시아 문명론", "동아시아의 서양문명 수용론", "두 얼굴의 인류사: 전쟁과 평화",
+          "디아스포라", "마녀사냥: 그 광기의 역사", "마음챙김과 비폭력대화", "만화로 세상보기",
+          "문명패러다임의 혁명: 서구근대화", "문화유산과 역사지리", "법, 질서, 국가",
+          "사농공상: 역사의 주연과 조연", "설탕과 소금: 사소한 것들의 역사", "세계 속 한국의 생존과 파워",
+          "스토리와 젠더", "시민생활과 법", "십자가와 초승달: 기독교와 이슬람", "아시아 공동체론",
+          "영토의 경계와 흔적: 이민, 이주, 이동", "영화로 읽는 도시인문학", "예술을 통한 공동체 만들기",
+          "위대한 발견의 통합적 관찰", "유럽문화와 도시문명", "일상의 딜레마: 윤리적 해법",
+          "정치학적 사유의 원리", "청춘을 위한 영화예찬", "평화와 갈등", "한국사회의 정치적 이슈들",
+          "행복이란 무엇인가", "황하와 장강: 중국역사의 발자취", "한국근현대사의 이해",
+          "고전읽기: 감시와 처벌", "고전읽기: 공감의 시대", "고전읽기: 돈의 철학", "고전읽기: 사기",
+          "고전읽기: 슬픈 열대", "고전읽기: 인간의 조건", "고전읽기: 자본론", "고전읽기: 정약용",
+          "고전읽기: 총균쇠", "고전읽기: 플라톤", "고전읽기: 한비자, 묵자", "공동체윤리의 빛과 그늘",
+          "공정경쟁과 소비자보호", "국제사회와 법", "기후와 역사", "길과 문명: 초원길 비단길 바닷길",
+          "대안사회 구상하기", "돈의 발명: 조개에서 도토리까지", "문명의 충돌과 조화",
+          "미국 드라마로 보는 초강대국의 정치", "생명윤리, 찬성과 반대", "세계금융사",
+          "세계의 공동체: 사례연구", "세계의 평화주의자들", "스포츠와 정치", "애타주의: 상호성의 윤리",
+          "우리가 만들어가는 통일", "인권과 기억", "정의란 무엇인가", "지속가능한 평화를 위한 국제질서",
+          "한국의 역사와 문화", "한국의 이슈와 경제", "현대도시론", "호모에티쿠스: 윤리적 인간의 탄생"
+        ];
+        dist4Names.forEach((n, i) => add(`d4_${i}`, "req_ge", n, 3, "dist4"));
+
+        // 배분이수 5영역: 지능·정보·미래
+        const dist5Names = [
+          "4차산업의 이해와 IoT기술 활용과 분석", "SF영화의 상상력: 미래의 평화와 윤리",
+          "고전읽기: 아르키메데스", "모두를 위한 인공지능과 윤리적 실제", "미래, 기술, 경영",
+          "미래를 질문하는 예술", "빅데이터와 스포츠산업", "생명과학의 미래", "생활 속의 금융",
+          "우주탐사: 당면한 미래", "인간과 생활 속의 로봇", "인공지능과 예술",
+          "인공지능을 위한 선형대수", "인류역사를 바꾼 첨단재료", "좋은 에너지, 나쁜 에너지, 다른 에너지",
+          "코딩하는 아티스트", "프로그래밍 입문", "SF영화와 미래정치", "고전읽기: SF소설",
+          "고전읽기: 특이점이 온다", "데이터 액티비즘", "디지털 사회의 문화",
+          "메카-필로소피아: 인간화된 기계와 기계화된 인간", "문화세계의 변혁, 안드로이드 세상",
+          "미래사회와 도시계획", "미래학과 미래마인드", "빅데이터를 통한 세상 바로알기",
+          "사막과 함께 살기: 기후변화와 전환사회", "에너지 문제와 과학기술의 역할",
+          "인간과 도구: 기술문명의 전개", "인간-컴퓨터 중심세계", "인공지능과 라이프 3.0",
+          "인공진화론, 기술의 시대를 살아가는 지혜", "인터넷과 법", "적정기술: 브리콜뢰르의 꿈",
+          "포스트휴먼 시대의 의료와 인간", "환경과 과학기술"
+        ];
+        dist5Names.forEach((n, i) => add(`d5_${i}`, "req_ge", n, 3, "dist5", "A0", n.includes("프로그래밍") || n.includes("코딩") || n.includes("인공지능") || n.includes("빅데이터")));
+
+        // 2. 자유이수 교양
+        add("f_sem", "free_ge", "전공탐색 및 기업가정신세미나 (구 전공탐색세미나)", 1, "free_sw", "P", false, {
+          sem: "1-1", changeType: "renamed", changeBadge: "명칭변경 (1학년 필수)"
+        });
+        const freeSwNames = [
+          "소프트웨어적 사유", "사이버스페이스 문화", "네트워크 기술로 인한 사회변화",
+          "언어와 컴퓨터", "디지털 전환과 4차 산업혁명", "파이썬으로 배우는 소프트웨어 코딩",
+          "빅데이터를 통한 세상 바로알기: R코딩", "파이썬을 통한 창의적 사고",
+          "새로운 생명체: 인공지능", "인공지능을 위한 수학", "디지털 세계의 신인류: 인공지능과 머신러닝",
+          "인공지능을 위한 기계학습", "파이썬과 데이터마이닝", "학습과 사고: 파이썬과 딥러닝",
+          "C#을 통한 창의적 사고", "앱인벤터로 배우는 코딩세상", "소프트웨어 개발자를 위한 C프로그래밍",
+          "4차산업혁명의 변화: 사물인터넷", "인터넷과 메타버스", "인터넷과 미디어콘텐츠 기술",
+          "게임과 네트워크: 이론과 코딩", "컴퓨터게임개론: 이론과 기술", "사물인터넷과 미래사회"
+        ];
+        freeSwNames.forEach((n, i) => add(`fsw_${i}`, "free_ge", n, 3, "free_sw", "A0", true));
+
+        const freeGen3Names = [
+          "공학과 경영", "공학도를 위한 소프트스킬", "기업윤리와 사회적 책임", "열린경영학",
+          "지식재산창업", "창업과 기업가정신", "창업경영과 기업가정신", "창업과 thinking design",
+          "창업전략과 모의창업", "온라인커머스 창업과 라이브쇼핑", "사회혁신 리빙랩",
+          "기초중국어", "기초일본어", "기초스페인어", "기초프랑스어", "기초러시아어",
+          "초급중국어", "초급일본어", "초급스페인어", "초급프랑스어", "초급러시아어",
+          "초급독일어", "초급라틴어", "초급고전한문", "중급일본어", "중급고전한문", "한자의 이해",
+          "영어시사토론", "영어에세이쓰기", "영어토론과 논쟁",
+          "건강과 웰니스", "운동과 체중관리", "웰니스 시대의 레포츠문화의 이해",
+          "스포츠 명가에게 배우는 재미와 감동", "응급처치 및 안전관리", "한방과 건강생활",
+          "현대사회 키워드로 스포츠 읽기", "공공미술과 사회", "디지털 사진촬영과 표현",
+          "사운드와 테크놀로지", "새김과 찍기: 현대판화", "색채와 상상력", "생활 속의 공예",
+          "세계의 춤 우리의 춤", "아이디어를 시각화하기", "인류세, 공생, 큐레이팅", "일상의 공연학",
+          "작곡의 밑그림: 화성학", "컴퓨터그래픽 기초", "클래식 음악산책", "합창의 재발견",
+          "대중문화와 음악", "매체와 현대예술", "무대 위의 세상: 연극,오페라,뮤지컬",
+          "사진의 이해와 감상", "소설창작교실", "시나리오창작교실", "시창작교실", "출판편집교실",
+          "르포르타주: 가려진 세계의 보고서", "오케스트라의 오늘", "우리가락으로 만나는 세상",
+          "재즈음악의 이해와 감상", "춤으로 만나는 한류, K-POP댄스", "클래식기타의 연주와 감상",
+          "포스트모던 아트 읽기", "현대미술 라운드테이블", "현대회화실기"
+        ];
+        freeGen3Names.forEach((n, i) => add(`fg3_${i}`, "free_ge", n, 3, "free_art"));
+
+        const freeGen2Names = [
+          "독립연구 1", "독립연구 2", "글로벌세미나", "신입생워크숍 1: 워밍업",
+          "신입생워크숍 2: 스타트업", "문화콘텐츠 창업", "후마니타스 특강", "후마니타스 예술특강"
+        ];
+        freeGen2Names.forEach((n, i) => add(`fg2_${i}`, "free_ge", n, 2, "free_art"));
+
+        const freeGen1Names = [
+          "골프", "국선도", "동계스포츠: 스노우보드", "동계스포츠: 스키", "레크레이션",
+          "배드민턴", "볼링", "수상스포츠(교양)", "수영", "승마", "요가", "요트",
+          "웨이트트레이닝", "윈드서핑", "인공암벽등반", "조깅과 워킹", "탁구", "태권도",
+          "테니스", "토탈컨디셔닝", "필라테스", "행복한 여가를 위한 야외활동", "현대생활과 체육",
+          "호신술", "동아시아 문화산책", "지구를 생각하는 예술", "지구를 생각하는 인공지능",
+          "창업세미나: 스타트업에서 빅테크까지", "후마니타스 세미나"
+        ];
+        freeGen1Names.forEach((n, i) => add(`fg1_${i}`, "free_ge", n, 1, "free_art"));
+
+        // 3. 전공기초 (22학번: 7과목 21학점 / 25~26학번 개편: 6과목 18학점)
+        add("mb_calc", "major_basic", "미분적분학", 3, "", "A0", false, { sem: "1-1" });
+        add("mb_phy1", "major_basic", "물리학 1", 3, "", "A0", false, { sem: "1-1" });
+        add("mb_phy2", "major_basic", "물리학 2", 3, "", "A0", false, {
+          sem: "1-2", changeType: "shifted", changeBadge: "22필수 / 26개편 조정"
+        });
+        add("mb_chem", "major_basic", "일반화학", 3, "", "A0", false, { sem: "1-1" });
+        add("mb_em1",  "major_basic", "공학수학 1", 3, "", "A0", false, { sem: "1-2" });
+        add("mb_em2",  "major_basic", "공학수학 2", 3, "", "A0", false, { sem: "2-1" });
+        add("mb_prog", "major_basic", "프로그래밍입문 (구 공학프로그래밍입문)", 3, "", "A0", true, {
+          sem: "2-1", changeType: "renamed", changeBadge: "명칭변경·SW인정 (구 공프입)"
+        });
+
+        // 4. 전공필수 (22학번: 8과목 19학점 / 25~26학번 개편: 9학점)
+        add("mr_fed",    "major_req", "디자인사고 (구 기초공학설계)", 3, "", "A0", false, {
+          sem: "1-2", changeType: "renamed", changeBadge: "명칭·구분개편 (구 기초공학설계)"
+        });
+        add("mr_cad",    "major_req", "그래픽및공학설계", 3, "", "A0", false, {
+          sem: "2-1", changeType: "shifted", changeBadge: "22전필 → 26전선 전환"
+        });
+        add("mr_thermo", "major_req", "열역학", 3, "", "A0", false, {
+          sem: "2-1", changeBadge: "4대역학 핵심"
+        });
+        add("mr_fluid",  "major_req", "유체역학", 3, "", "A0", false, {
+          sem: "2-2", changeBadge: "4대역학 핵심"
+        });
+        add("mr_solid",  "major_req", "재료역학 (고체역학)", 3, "", "A0", false, {
+          sem: "2-1", changeBadge: "4대역학 핵심"
+        });
+        add("mr_dyn",    "major_req", "동역학", 3, "", "A0", false, {
+          sem: "2-2", changeBadge: "4대역학 핵심"
+        });
+        add("mr_sem",    "major_req", "기계공학윤강 (세미나)", 1, "", "A0", false, {
+          sem: "3-1", changeType: "closed", changeBadge: "22전필(1학점) · 26개편 제외"
+        });
+        add("mr_thesis", "major_req", "졸업논문(기계공학)", 0, "", "P", false, {
+          sem: "4-2", changeBadge: "0학점 P/NP 필수"
+        });
+
+        // 5. 전공선택 (기계공학부 기존 40과목 + 폐지/변경 표기 + 25/26 신설 트랙 과목 + 타전공 인정)
+        const meList = [
+          { n: "정역학", cr: 3, sem: "1-2", changeType: "closed", changeBadge: "폐지 (기이수 전공선택 인정)" },
+          { n: "공학수학 3", cr: 3, sem: "2-2", core8: true },
+          { n: "응용열역학", cr: 3, sem: "2-2", core8: true },
+          { n: "응용재료역학", cr: 3, sem: "2-2", core8: true },
+          { n: "기구메카니즘", cr: 3, sem: "2-2" },
+          { n: "전기전자회로", cr: 3, sem: "2-2" },
+          { n: "계측공학", cr: 3, sem: "2-2" },
+          { n: "수치해석", cr: 3, sem: "3-1", sw: true },
+          { n: "실험통계학 (AI·로봇데이터통계)", cr: 3, sem: "3-1", changeType: "renamed", changeBadge: "개편·세분화 (지능로봇 연계)" },
+          { n: "프로젝트및세미나", cr: 2, sem: "3-2", changeBadge: "졸업논문 필수요건(2학점)" },
+          { n: "기계요소설계", cr: 3, sem: "3-1", core8: true },
+          { n: "기계공학실험", cr: 2, sem: "3-1", changeBadge: "졸업논문 필수요건(2학점)" },
+          { n: "기계공작법 (첨단제조공정)", cr: 3, sem: "3-1", core8: true },
+          { n: "열전달", cr: 3, sem: "3-1", core8: true },
+          { n: "냉동및공기조화", cr: 3, sem: "3-2" },
+          { n: "열에너지시스템", cr: 3, sem: "3-2" },
+          { n: "내연기관 (모빌리티추진시스템)", cr: 3, sem: "3-2", changeType: "renamed", changeBadge: "개편 (구 내연기관)" },
+          { n: "응용유체역학", cr: 3, sem: "3-1", core8: true },
+          { n: "전산열유체공학 (CFD)", cr: 3, sem: "3-2" },
+          { n: "재료과학", cr: 3, sem: "3-1" },
+          { n: "구조재료시스템", cr: 3, sem: "3-2" },
+          { n: "유한요소법 (FEM)", cr: 3, sem: "3-2" },
+          { n: "나노재료와응용", cr: 3, sem: "3-2" },
+          { n: "기계설계학", cr: 3, sem: "3-2" },
+          { n: "지능형생산공학 (CAM)", cr: 3, sem: "3-2" },
+          { n: "생체공학", cr: 3, sem: "3-2" },
+          { n: "기계진동", cr: 3, sem: "3-1", core8: true },
+          { n: "시스템동역학", cr: 3, sem: "3-1" },
+          { n: "자동제어", cr: 3, sem: "3-2" },
+          { n: "메카트로닉스", cr: 3, sem: "3-1" },
+          { n: "기계공학종합설계 1 (캡스톤)", cr: 2, sem: "4-1", changeBadge: "졸업논문 필수요건(2학점)" },
+          { n: "기계공학종합설계 2 (캡스톤)", cr: 3, sem: "4-2" },
+          { n: "전산역학 (CAE)", cr: 3, sem: "4-1" },
+          { n: "연소와환경", cr: 3, sem: "4-1" },
+          { n: "유체유동시스템", cr: 3, sem: "4-1" },
+          { n: "로봇공학", cr: 3, sem: "3-2" },
+          { n: "로봇융합공학설계", cr: 3, sem: "4-1", changeType: "new26", changeBadge: "25·26 지능로봇 신설" },
+          { n: "기계인공지능 / 로봇AI", cr: 3, sem: "3-2", changeType: "new26", changeBadge: "25·26 지능로봇 신설" },
+          { n: "항공우주공학개론 / 비행역학", cr: 3, sem: "3-1", changeType: "new26", changeBadge: "25·26 항공모빌리티 신설" },
+          { n: "자율주행모빌리티제어", cr: 3, sem: "4-1", changeType: "new26", changeBadge: "25·26 항공모빌리티 신설" },
+          { n: "연구연수활동 1", cr: 1, sem: "3-2" },
+          { n: "연구연수활동 2", cr: 1, sem: "4-1" },
+          { n: "독립심화학습 1", cr: 3, sem: "3-2", gr: "P" },
+          { n: "독립심화학습 2", cr: 3, sem: "4-1", gr: "P" },
+          { n: "CAD/CAM (타전공인정)", cr: 3, sem: "-" },
+          { n: "기술경영 (타전공인정)", cr: 3, sem: "-" },
+          { n: "전자기학 I (타전공인정)", cr: 3, sem: "-" },
+          { n: "회로이론 (타전공인정)", cr: 3, sem: "-" },
+          { n: "논리회로 (타전공인정)", cr: 3, sem: "-" },
+          { n: "신호와시스템 (타전공인정)", cr: 3, sem: "-" },
+          { n: "핵공학개론 I (타전공인정)", cr: 3, sem: "-" },
+          { n: "원자로이론 I (타전공인정)", cr: 3, sem: "-" },
+          { n: "방사선계측이론 (타전공인정)", cr: 3, sem: "-" },
+          { n: "반응공학 (타전공인정)", cr: 3, sem: "-" },
+          { n: "재료양자물리 (타전공인정)", cr: 3, sem: "-" }
+        ];
+        meList.forEach((item, i) => add(`me_${i}`, "major_elec", item.n, item.cr, "", item.gr || "A0", !!item.sw, {
+          sem: item.sem,
+          changeType: item.changeType || "",
+          changeBadge: item.changeBadge || "",
+          core8: !!item.core8
+        }));
+
+        // 6. 일반선택 예시
+        add("gen_1", "gen_elec", "일반선택 과목 1", 3);
+        add("gen_2", "gen_elec", "일반선택 과목 2", 3);
+        add("gen_3", "gen_elec", "일반선택 과목 3", 3);
+        add("gen_4", "gen_elec", "표준현장실습 / 취창업스쿨", 3);
+
+        return list;
+      }
+
+      const INITIAL_COURSES = makeCourses();
+
+      const SUBGROUP_INFO = {
+        core: {
+          title: "필수교과 (문명전개의 지구적 문맥 · 글쓰기 · 대학영어)",
+          reqText: "필수: 6과목 · 17학점 이수 (인간의가치탐색 3, 세계와시민/우리가사는세계 3, 빅뱅에서문명까지 3, 성찰과표현 3, 주제연구 3, 대학영어 2)"
+        },
+        dist1: {
+          title: "배분이수 1영역: 생명 · 우주 · 인간",
+          reqText: "배분이수 5개 영역 중 3개 영역 이상 선택하여 총 3과목(9학점) 이상 이수"
+        },
+        dist2: {
+          title: "배분이수 2영역: 분석 · 추론 · 논리",
+          reqText: "배분이수 5개 영역 중 3개 영역 이상 선택하여 총 3과목(9학점) 이상 이수"
+        },
+        dist3: {
+          title: "배분이수 3영역: 상징 · 문화 · 소통",
+          reqText: "배분이수 5개 영역 중 3개 영역 이상 선택하여 총 3과목(9학점) 이상 이수"
+        },
+        dist4: {
+          title: "배분이수 4영역: 사회 · 공동체 · 평화",
+          reqText: "배분이수 5개 영역 중 3개 영역 이상 선택하여 총 3과목(9학점) 이상 이수"
+        },
+        dist5: {
+          title: "배분이수 5영역: 지능 · 정보 · 미래",
+          reqText: "배분이수 5개 영역 중 3개 영역 이상 선택하여 총 3과목(9학점) 이상 이수"
+        },
+        free_sw: {
+          title: "자유이수: 전공탐색세미나(필수 1학점) 및 SW · AI 교양",
+          reqText: "전공탐색세미나 1학점 필수 + 자유이수 합계 3학점 이상 (SW교양 수강 시 SW기초 6학점에도 동시 인정)"
+        },
+        free_art: {
+          title: "자유이수: 외국어 · 예술 · 체육 · 창업 · 일반교양",
+          reqText: "자유이수 총 3학점 이상 (필수+배분+자유 합산 교양 총 29학점 이상, 최대 50학점까지 졸업학점 인정)"
+        }
+      };
+
+      function defaultState() {
+        return {
+          curriculum: "2022",
+          currentSem: 5, // 기본값: 3학년 1학기 (5학기)
+          maxPerSem: 18, // 기계공학부 학기당 기본 최대학점 18학점
+          excessToElec: true,
+          bigBangSub: false,
+          activeCat: "all",
+          searchQuery: "",
+          statusFilter: "all",
+          semFilter: "all",
+          engOnly: false,
+          courses: JSON.parse(JSON.stringify(INITIAL_COURSES)),
+          special: {
+            gradCertOption: "toeic",
+            gradCertDone: false,
+            engTrackOption: "3",
+            engTrackDone: false,
+            swOption: "6cr",
+            swDone: false,
+            thesisTrackOption: "capstone",
+            thesisDone: false,
+            regSemestersDone: false,
+            minorDone: false
+          }
+        };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("khu_me_grad_audit_v2");
+          if (!raw) return defaultState();
+          const parsed = JSON.parse(raw);
+          const base = defaultState();
+          const savedMap = new Map((parsed.courses || []).map(c => [c.id, c]));
+          const mergedCourses = base.courses.map(c => {
+            const s = savedMap.get(c.id);
+            if (!s) return c;
+            return {
+              ...c,
+              status: s.status || "none",
+              credits: s.credits ?? c.credits,
+              grade: s.grade || c.grade,
+              sem: s.sem || c.sem || "-",
+              isEng: !!s.isEng
+            };
+          });
+          (parsed.courses || []).forEach(s => {
+            if (String(s.id).startsWith("custom_")) {
+              mergedCourses.push({ sem: "-", changeType: "", changeBadge: "사용자 추가", ...s });
+            }
+          });
+          return {
+            ...base,
+            ...parsed,
+            courses: mergedCourses,
+            special: { ...base.special, ...(parsed.special || {}) }
+          };
+        } catch (e) {
+          return defaultState();
+        }
+      }
+
+      let state = loadState();
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function showToast(msg) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => el.classList.remove("show"), 2000);
+      }
+
+      function computeMetrics() {
+        const rule = CURRICULA[state.curriculum];
+        const sumBy = (cat) => {
+          let done = 0, plan = 0, doneCnt = 0, planCnt = 0;
+          state.courses.forEach(c => {
+            if (c.cat !== cat) return;
+            const g = GRADE_MAP[c.grade] || GRADE_MAP["A0"];
+            const cr = Number(c.credits) || 0;
+            if (c.status === "done" && g.pass) { done += cr; doneCnt += 1; }
+            if (c.status === "plan" && g.pass) { plan += cr; planCnt += 1; }
+          });
+          return { done, plan, both: done + plan, doneCnt, bothCnt: doneCnt + planCnt };
+        };
+
+        const reqGe = sumBy("req_ge");
+        const freeGe = sumBy("free_ge");
+
+        // Big Bang substitution check (미분적분학 or 물리학 1 completed -> substitutes 빅뱅에서 문명까지 3cr for area fulfillment, not double-counted in total 130)
+        const calcOrPhy1Done = state.courses.some(c =>
+          (c.id === "mb_calc" || c.id === "mb_phy1") && c.status === "done" && GRADE_MAP[c.grade]?.pass
+        );
+        const bigBangCourse = state.courses.find(c => c.id === "c_hum3");
+        const bigBangAlreadyDone = bigBangCourse && bigBangCourse.status === "done" && GRADE_MAP[bigBangCourse.grade]?.pass;
+        const bigBangSubBonus = (state.bigBangSub && calcOrPhy1Done && !bigBangAlreadyDone) ? 3 : 0;
+
+        const geRawDone = reqGe.done + freeGe.done;
+        const geRawBoth = reqGe.both + freeGe.both;
+        const geAreaDone = geRawDone + bigBangSubBonus;
+        const geAreaBoth = geRawBoth + bigBangSubBonus;
+
+        let coreDoneCr = bigBangSubBonus, coreDoneCnt = bigBangSubBonus > 0 ? 1 : 0;
+        let distDoneCr = 0, distDoneCnt = 0, distBothCr = 0, distBothCnt = 0;
+        const distAreasDone = new Set();
+        const distAreasBoth = new Set();
+
+        state.courses.forEach(c => {
+          if (c.cat !== "req_ge") return;
+          const g = GRADE_MAP[c.grade] || GRADE_MAP["A0"];
+          if (!g.pass) return;
+          const cr = Number(c.credits) || 0;
+          if (c.sub === "core") {
+            if (c.status === "done") { coreDoneCr += cr; coreDoneCnt += 1; }
+          } else if (String(c.sub).startsWith("dist")) {
+            if (c.status === "done") {
+              distDoneCr += cr;
+              distDoneCnt += 1;
+              distAreasDone.add(c.sub);
+              distAreasBoth.add(c.sub);
+            } else if (c.status === "plan") {
+              distBothCr += cr;
+              distBothCnt += 1;
+              distAreasBoth.add(c.sub);
+            }
+          }
+        });
+        distBothCr += distDoneCr;
+        distBothCnt += distDoneCnt;
+
+        const mb = sumBy("major_basic");
+        const mr = sumBy("major_req");
+        const me = sumBy("major_elec");
+        const gen = sumBy("gen_elec");
+
+        const mrExcessDone = state.excessToElec ? Math.max(0, mr.done - rule.majorReqReq) : 0;
+        const mrExcessBoth = state.excessToElec ? Math.max(0, mr.both - rule.majorReqReq) : 0;
+
+        const meEffDone = me.done + mrExcessDone;
+        const meEffBoth = me.both + mrExcessBoth;
+
+        const majorTotalDone = mb.done + mr.done + me.done;
+        const majorTotalBoth = mb.both + mr.both + me.both;
+
+        // Total graduation credits never double-count bigBangSubBonus
+        const totalDone = geRawDone + majorTotalDone + gen.done;
+        const totalBoth = geRawBoth + majorTotalBoth + gen.both;
+
+        // Remaining Semesters & Surplus Credit Calculation
+        const curSem = Number(state.currentSem) || 5;
+        const maxPerSem = Number(state.maxPerSem) || 18;
+        const remainSemesters = curSem <= 8 ? Math.max(0, 8 - curSem) : 1;
+        const maxAvailableCredits = remainSemesters * maxPerSem;
+        const neededCreditsDone = Math.max(0, rule.totalReq - totalDone);
+        const neededCreditsAfterPlan = Math.max(0, rule.totalReq - totalBoth);
+        const avgNeededPerSem = remainSemesters > 0 ? (neededCreditsDone / remainSemesters) : neededCreditsDone;
+        const surplusCredits = maxAvailableCredits - neededCreditsDone; // 양수면 잉여(여유) 학점, 음수면 초과 필요 학점
+
+        function calcGpa(includePlan, majorOnly) {
+          let pts = 0, crSum = 0;
+          state.courses.forEach(c => {
+            if (majorOnly && !["major_basic", "major_req", "major_elec"].includes(c.cat)) return;
+            const isTarget = c.status === "done" || (includePlan && c.status === "plan");
+            if (!isTarget) return;
+            const g = GRADE_MAP[c.grade];
+            if (!g || !g.gpa) return;
+            const cr = Number(c.credits) || 0;
+            if (cr <= 0) return;
+            pts += cr * g.point;
+            crSum += cr;
+          });
+          return { gpa: crSum > 0 ? pts / crSum : 0, credits: crSum };
+        }
+
+        const allGpaDone = calcGpa(false, false);
+        const allGpaPlan = calcGpa(true, false);
+        const majorGpaDone = calcGpa(false, true);
+        const majorGpaPlan = calcGpa(true, true);
+
+        let engDoneCount = 0, engBothCount = 0;
+        let swDoneCr = 0, swBothCr = 0;
+        state.courses.forEach(c => {
+          const g = GRADE_MAP[c.grade] || GRADE_MAP["A0"];
+          const cr = Number(c.credits) || 0;
+          const isMajor = ["major_basic", "major_req", "major_elec"].includes(c.cat);
+          if (isMajor && c.isEng && g.pass) {
+            if (c.status === "done") engDoneCount += 1;
+            if (c.status === "done" || c.status === "plan") engBothCount += 1;
+          }
+          if (c.isSw && g.pass) {
+            if (c.status === "done") swDoneCr += cr;
+            if (c.status === "done" || c.status === "plan") swBothCr += cr;
+          }
+        });
+
+        // Thesis / Capstone 4 required courses auto-detection
+        const thesisReqIds = ["me_9", "me_11", "me_30", "mr_thesis"]; // 프로젝트및세미나, 기계공학실험, 기계공학종합설계1, 졸업논문
+        const thesisAutoCount = thesisReqIds.filter(id => {
+          const c = state.courses.find(x => x.id === id);
+          return c && c.status === "done" && GRADE_MAP[c.grade]?.pass;
+        }).length;
+
+        // Core 8 Major Elective recommendation check
+        const core8Courses = state.courses.filter(c => c.core8);
+        const core8DoneCount = core8Courses.filter(c => c.status === "done" && GRADE_MAP[c.grade]?.pass).length;
+
+        const distMet = distAreasDone.size >= rule.geDistAreasReq && distDoneCr >= rule.geDistCreditsReq;
+        const geMet = geAreaDone >= rule.geReq && coreDoneCr >= rule.geCoreReq && distMet && freeGe.done >= rule.geFreeReq;
+        const mbMet = mb.done >= rule.majorBasicReq;
+        const mrMet = mr.done >= rule.majorReqReq;
+        const meMet = meEffDone >= rule.majorElecReq;
+        const majorMet = majorTotalDone >= rule.majorTotalReq;
+        const totalMet = totalDone >= rule.totalReq;
+        const gpaMet = allGpaDone.credits > 0 && allGpaDone.gpa >= 1.7;
+
+        const allCreditsMet = geMet && mbMet && mrMet && meMet && majorMet && totalMet;
+
+        return {
+          rule,
+          ge: { done: geAreaDone, rawDone: geRawDone, plan: reqGe.plan + freeGe.plan, both: geAreaBoth, req: rule.geReq, bigBangSubBonus },
+          coreGe: { doneCr: coreDoneCr, doneCnt: coreDoneCnt },
+          distGe: {
+            doneCr: distDoneCr, doneCnt: distDoneCnt,
+            bothCr: distBothCr, bothCnt: distBothCnt,
+            areasDone: distAreasDone.size, areasBoth: distAreasBoth.size
+          },
+          freeGe,
+          mb: { ...mb, req: rule.majorBasicReq },
+          mr: { ...mr, req: rule.majorReqReq },
+          me: { done: meEffDone, rawDone: me.done, both: meEffBoth, rawBoth: me.both, req: rule.majorElecReq, excessDone: mrExcessDone, doneCnt: me.doneCnt },
+          gen: { ...gen, req: rule.genElecHint },
+          majorTotal: { done: majorTotalDone, both: majorTotalBoth, req: rule.majorTotalReq },
+          total: { done: totalDone, both: totalBoth, req: rule.totalReq },
+          semInfo: { curSem, maxPerSem, remainSemesters, maxAvailableCredits, neededCreditsDone, neededCreditsAfterPlan, avgNeededPerSem, surplusCredits },
+          allGpaDone, allGpaPlan, majorGpaDone, majorGpaPlan,
+          engDoneCount, engBothCount, swDoneCr, swBothCr,
+          thesisAutoCount, core8Courses, core8DoneCount,
+          allCreditsMet, gpaMet
+        };
+      }
+
+      function renderAll() {
+        const m = computeMetrics();
+        renderTopbar();
+        renderDashboard(m);
+        renderAreas(m);
+        renderChecklist(m);
+        renderCatTabs();
+        renderCourseSections(m);
+      }
+
+      function renderTopbar() {
+        document.getElementById("btnCurr2022").classList.toggle("active", state.curriculum === "2022");
+        document.getElementById("btnCurr2026").classList.toggle("active", state.curriculum === "2026");
+        document.getElementById("selCurrentSem").value = String(state.currentSem || 5);
+        document.getElementById("selMaxPerSem").value = String(state.maxPerSem || 18);
+        document.getElementById("chkExcessToElec").checked = !!state.excessToElec;
+        document.getElementById("chkBigBangSub").checked = !!state.bigBangSub;
+        document.getElementById("searchInput").value = state.searchQuery;
+        document.getElementById("statusFilter").value = state.statusFilter;
+        document.getElementById("semFilter").value = state.semFilter || "all";
+        document.getElementById("engOnlyFilter").checked = !!state.engOnly;
+      }
+
+      function renderDashboard(m) {
+        const pctDone = Math.min(100, (m.total.done / m.total.req) * 100);
+        const pctPlan = Math.min(100, (m.total.both / m.total.req) * 100);
+        document.getElementById("kpiTotalDone").textContent = m.total.done;
+        document.getElementById("kpiTotalReq").textContent = m.total.req;
+        document.getElementById("kpiTotalWithPlan").textContent = m.total.both;
+        document.getElementById("kpiTotalRemain").textContent = Math.max(0, m.total.req - m.total.done);
+        document.getElementById("barTotalDone").style.width = pctDone.toFixed(1) + "%";
+        document.getElementById("barTotalPlan").style.width = pctPlan.toFixed(1) + "%";
+
+        const badge = document.getElementById("kpiTotalBadge");
+        if (m.total.done >= m.total.req) {
+          badge.className = "area-badge badge-ok";
+          badge.textContent = "달성";
+        } else if (m.total.both >= m.total.req) {
+          badge.className = "area-badge badge-plan";
+          badge.textContent = "예정 달성";
+        } else {
+          badge.className = "area-badge badge-lack";
+          badge.textContent = Math.max(0, m.total.req - m.total.done) + "학점 부족";
+        }
+
+        // Semester & Surplus Card
+        const si = m.semInfo;
+        const semBadge = document.getElementById("kpiSemLabel");
+        semBadge.textContent = si.curSem <= 8 ? `잔여 ${si.remainSemesters}학기 (8학기 기준)` : "초과학기";
+        document.getElementById("kpiAvgPerSem").textContent = si.remainSemesters > 0 ? si.avgNeededPerSem.toFixed(1) : si.neededCreditsDone;
+        document.getElementById("kpiMaxAvailCr").textContent = si.maxAvailableCredits;
+        const surEl = document.getElementById("kpiSurplusCr");
+        if (si.surplusCredits >= 0) {
+          surEl.textContent = `+${si.surplusCredits}`;
+          surEl.className = "text-done";
+        } else {
+          surEl.textContent = `${si.surplusCredits} (계절/초과 필요)`;
+          surEl.className = "text-danger";
+        }
+
+        document.getElementById("kpiAllGpaDone").textContent = m.allGpaDone.gpa.toFixed(2);
+        document.getElementById("kpiAllGpaCredits").textContent = `(${m.allGpaDone.credits}학점)`;
+        document.getElementById("kpiAllGpaPlan").textContent = m.allGpaPlan.gpa.toFixed(2);
+        const minGpaEl = document.getElementById("kpiMinGpaStatus");
+        if (m.allGpaDone.credits === 0) {
+          minGpaEl.textContent = "기준 1.70+";
+          minGpaEl.className = "";
+        } else if (m.allGpaDone.gpa >= 1.7) {
+          minGpaEl.textContent = "기준 충족(1.70+)";
+          minGpaEl.className = "text-done";
+        } else {
+          minGpaEl.textContent = "1.70 미만";
+          minGpaEl.className = "text-danger";
+        }
+
+        document.getElementById("kpiMajorGpaDone").textContent = m.majorGpaDone.gpa.toFixed(2);
+        document.getElementById("kpiMajorGpaCredits").textContent = `(${m.majorGpaDone.credits}학점)`;
+        document.getElementById("kpiMajorGpaPlan").textContent = m.majorGpaPlan.gpa.toFixed(2);
+        document.getElementById("kpiMajorTotalDone").textContent = m.majorTotal.done;
+        document.getElementById("kpiMajorTotalReq").textContent = m.majorTotal.req;
+        document.getElementById("kpiCurrLabel").textContent = state.curriculum + "학번 기준";
+
+        const specChecks = getSpecChecks(m);
+        const specPassedCount = specChecks.filter(x => x.passed).length;
+        const specAllMet = specPassedCount === specChecks.length;
+
+        const creditEl = document.getElementById("kpiCreditStatus");
+        creditEl.textContent = m.allCreditsMet ? "충족" : "미충족";
+        creditEl.className = m.allCreditsMet ? "text-done" : "text-warn";
+
+        const specEl = document.getElementById("kpiSpecStatus");
+        specEl.textContent = specAllMet ? "모두 충족" : `${specPassedCount}/${specChecks.length} 충족`;
+        specEl.className = specAllMet ? "text-done" : "text-warn";
+
+        const overallEl = document.getElementById("kpiOverallStatus");
+        if (m.allCreditsMet && specAllMet && m.gpaMet) {
+          overallEl.textContent = "졸업 요건 충족";
+          overallEl.className = "kpi-main text-done";
+        } else {
+          overallEl.textContent = "이수 진행 중";
+          overallEl.className = "kpi-main";
+        }
+      }
+
+      function renderAreas(m) {
+        const r = m.rule;
+        const areas = [
+          {
+            title: "교양 (필수+배분+자유)",
+            req: r.geReq,
+            done: m.ge.done,
+            both: m.ge.both,
+            sub: `필수17 · 배분3영역(9+) · 자유3+ ${m.ge.bigBangSubBonus ? "(빅뱅대체+3 반영)" : ""}`
+          },
+          {
+            title: `전공기초 (${r.majorBasicCourses}과목)`,
+            req: r.majorBasicReq,
+            done: m.mb.done,
+            both: m.mb.both,
+            sub: `기준: ${r.majorBasicCourses}과목 ${r.majorBasicReq}학점 (완료 ${m.mb.doneCnt}과목)`
+          },
+          {
+            title: `전공필수 (${r.majorReqCourses}과목)`,
+            req: r.majorReqReq,
+            done: m.mr.done,
+            both: m.mr.both,
+            sub: m.me.excessDone > 0 ? `초과 ${m.me.excessDone}학점 전선 자동이월` : `기준: ${r.majorReqCourses}과목 ${r.majorReqReq}학점`
+          },
+          {
+            title: `전공선택 (${r.majorElecCourses}과목+)`,
+            req: r.majorElecReq,
+            done: m.me.done,
+            both: m.me.both,
+            sub: `기준: ${r.majorElecReq}학점+ (전공합계 ${m.majorTotal.done}/${r.majorTotalReq}학점)`
+          },
+          {
+            title: "일반선택 (잔여학점)",
+            req: r.genElecHint,
+            done: m.gen.done,
+            both: m.gen.both,
+            sub: `총 130학점 충족용 참고치 (${r.genElecHint}학점 내외)`,
+            isOptional: true
+          }
+        ];
+
+        document.getElementById("areaGrid").innerHTML = areas.map(a => {
+          const pctD = a.req > 0 ? Math.min(100, (a.done / a.req) * 100) : 100;
+          const pctP = a.req > 0 ? Math.min(100, (a.both / a.req) * 100) : 100;
+          const remain = Math.max(0, a.req - a.done);
+          let badgeCls = "badge-lack", badgeTxt = `${remain} 부족`;
+          if (a.isOptional) {
+            badgeCls = "badge-plan";
+            badgeTxt = `${a.done}학점`;
+          } else if (a.done >= a.req) {
+            badgeCls = "badge-ok";
+            badgeTxt = "충족";
+          } else if (a.both >= a.req) {
+            badgeCls = "badge-plan";
+            badgeTxt = "예정 충족";
+          }
+          return `
+            <div class="area-box ${!a.isOptional && a.done >= a.req ? "met" : ""}">
+              <div class="area-box-top">
+                <span class="area-name">${escapeHtml(a.title)}</span>
+                <span class="area-badge ${badgeCls}">${escapeHtml(badgeTxt)}</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-plan" style="width:${pctP.toFixed(1)}%"></div>
+                <div class="progress-done" style="width:${pctD.toFixed(1)}%"></div>
+              </div>
+              <div class="area-stats">
+                <span>기준: <strong>${a.req}</strong></span>
+                <span>완료: <strong class="text-done">${a.done}</strong></span>
+                <span>희망포함: <strong class="text-plan">${a.both}</strong></span>
+                <span>부족: <strong>${a.isOptional ? "-" : remain}</strong></span>
+              </div>
+              <div style="font-size:10.5px; color:var(--text-muted);">${escapeHtml(a.sub)}</div>
+            </div>
+          `;
+        }).join("");
+
+        // Core 8 Major Courses Bar ( 시행세칙 제12조 전공핵심 8과목 중 5과목 권장 )
+        const core8El = document.getElementById("core8Bar");
+        core8El.innerHTML = `
+          <div>
+            <strong>전공핵심 8과목 이수 현황 (${m.core8DoneCount}/5과목 권장)</strong>
+            <span style="color:var(--text-muted); margin-left:6px;">시행세칙 제12조 권장사항: 8과목 중 최소 5과목 이상 수강 권장</span>
+          </div>
+          <div class="core8-pills">
+            ${m.core8Courses.map(c => `<span class="core8-pill ${c.status}">${escapeHtml(c.name.split(" (")[0])}</span>`).join("")}
+          </div>
+        `;
+
+        document.getElementById("curriculumBanner").innerHTML = `
+          <div><strong>${escapeHtml(r.name)}</strong> — ${escapeHtml(r.bannerText)}</div>
+          <div>※ <strong>주요 교과목 개편 안내</strong>: <strong>정역학</strong>(폐지·기이수 전선 인정), <strong>기초공학설계 → 디자인사고</strong>(명칭·구분 개편), <strong>공학프로그래밍입문 → 프로그래밍입문</strong>(명칭 변경), <strong>그래픽및공학설계·기계공학윤강</strong>(22전필 → 26개편 시 전선 전환/제외), <strong>실험통계학·내연기관</strong>(26학부제 세부전공 개편 연동). 모든 구/신 과목은 구분 배지로 표시되며 졸업학점에 정상 반영됩니다.</div>
+        `;
+      }
+
+      function getSpecChecks(m) {
+        const s = state.special;
+        const engReq = s.engTrackOption === "1" ? 1 : 3;
+        const engAutoOk = m.engDoneCount >= engReq;
+        const swAutoOk = m.swDoneCr >= 6;
+        const thesisAutoOk = m.thesisAutoCount === 4;
+        const is2026 = state.curriculum === "2026";
+        const semAutoOk = Number(state.currentSem) >= 8;
+
+        return [
+          {
+            id: "gradCert",
+            title: "졸업능력인증 (영어인증)",
+            desc: "공인영어성적 또는 대체과정",
+            passed: s.gradCertDone,
+            optionKey: "gradCertOption",
+            doneKey: "gradCertDone",
+            options: [
+              { value: "toeic", label: "공인영어성적 제출" },
+              { value: "alt", label: "대체 프로그램 이수" },
+              { value: "exempt", label: "면제 대상" }
+            ]
+          },
+          {
+            id: "engTrack",
+            title: `전공 영어강좌 (${m.engDoneCount}/${engReq}과목)`,
+            desc: `전공 내 ENG 버튼 체크 과목 자동합산 (희망포함 ${m.engBothCount}과목)`,
+            passed: s.engTrackDone || engAutoOk,
+            autoPassed: engAutoOk,
+            optionKey: "engTrackOption",
+            doneKey: "engTrackDone",
+            options: [
+              { value: "3", label: "신입생 (3과목 이상)" },
+              { value: "1", label: "편입생 (1과목 이상)" }
+            ]
+          },
+          {
+            id: "sw",
+            title: `SW 기초교육 (${m.swDoneCr}/6학점)`,
+            desc: `프로그래밍입문·수치해석·SW교양 자동합산 (희망포함 ${m.swBothCr}학점)`,
+            passed: s.swDone || swAutoOk,
+            autoPassed: swAutoOk,
+            optionKey: "swOption",
+            doneKey: "swDone",
+            options: [
+              { value: "6cr", label: "SW 6학점 이수" },
+              { value: "exempt", label: "편입/외국인 면제" }
+            ]
+          },
+          {
+            id: "thesis",
+            title: `졸업논문 트랙 (${m.thesisAutoCount}/4과목)`,
+            desc: "실험+프세+종합설계1+졸업논문 모두 완료 시 자동충족",
+            passed: s.thesisDone || thesisAutoOk,
+            autoPassed: thesisAutoOk,
+            optionKey: "thesisTrackOption",
+            doneKey: "thesisDone",
+            options: [
+              { value: "capstone", label: "정규 캡스톤/졸업논문" },
+              { value: "bsms", label: "학·석사연계 트랙" },
+              { value: "intern", label: "현장실습/대체 인정" }
+            ]
+          },
+          {
+            id: "academic",
+            title: is2026 ? "8학기 등록 & 부전공/MD" : "8학기 등록 & 평점 1.7+",
+            desc: is2026 ? "2026 단일전공 시 부전공/MD 필수" : `평점 1.70+ (현재 ${m.allGpaDone.gpa.toFixed(2)})`,
+            passed: is2026 ? ((s.regSemestersDone || semAutoOk) && s.minorDone) : (s.regSemestersDone || semAutoOk),
+            semAutoOk,
+            isAcademic: true,
+            is2026
+          }
+        ];
+      }
+
+      function renderChecklist(m) {
+        const items = getSpecChecks(m);
+        const passedCount = items.filter(i => i.passed).length;
+        document.getElementById("specSummaryText").textContent = `${passedCount} / ${items.length} 충족`;
+
+        document.getElementById("checklistGrid").innerHTML = items.map(item => {
+          if (item.isAcademic) {
+            return `
+              <div class="req-card ${item.passed ? "passed" : ""}">
+                <div class="req-top">
+                  <div class="req-title">${escapeHtml(item.title)}</div>
+                  <span class="area-badge ${item.passed ? "badge-ok" : "badge-lack"}">${item.passed ? "충족" : "미충족"}</span>
+                </div>
+                <div class="req-desc">${escapeHtml(item.desc)}</div>
+                <div class="req-controls">
+                  <label class="check-pill">
+                    <input type="checkbox" data-spec-toggle="regSemestersDone" ${state.special.regSemestersDone || item.semAutoOk ? "checked" : ""} />
+                    <span>8학기 이상 등록</span>
+                  </label>
+                  ${item.is2026 ? `
+                    <label class="check-pill">
+                      <input type="checkbox" data-spec-toggle="minorDone" ${state.special.minorDone ? "checked" : ""} />
+                      <span>부전공/마이크로디그리</span>
+                    </label>
+                  ` : ""}
+                </div>
+              </div>
+            `;
+          }
+          return `
+            <div class="req-card ${item.passed ? "passed" : ""}">
+              <div class="req-top">
+                <div class="req-title">${escapeHtml(item.title)}</div>
+                <span class="area-badge ${item.passed ? "badge-ok" : "badge-lack"}">${item.passed ? "충족" : "미충족"}</span>
+              </div>
+              <div class="req-desc">${escapeHtml(item.desc)}</div>
+              <div class="req-controls">
+                <select class="req-select" data-spec-select="${item.optionKey}">
+                  ${item.options.map(o => `<option value="${o.value}" ${state.special[item.optionKey] === o.value ? "selected" : ""}>${escapeHtml(o.label)}</option>`).join("")}
+                </select>
+                <label class="check-pill">
+                  <input type="checkbox" data-spec-toggle="${item.doneKey}" ${state.special[item.doneKey] || item.autoPassed ? "checked" : ""} />
+                  <span>${item.autoPassed ? "자동충족됨" : "달성 체크"}</span>
+                </label>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function renderCatTabs() {
+        const countBy = (id) => id === "all"
+          ? state.courses.length
+          : state.courses.filter(c => c.cat === id).length;
+
+        const allTabs = [{ id: "all", label: "전체 영역" }, ...CATEGORIES];
+        document.getElementById("catTabs").innerHTML = allTabs.map(t => `
+          <button type="button" class="cat-tab ${state.activeCat === t.id ? "active" : ""}" data-cat-tab="${t.id}">
+            ${escapeHtml(t.label)} (${countBy(t.id)})
+          </button>
+        `).join("");
+      }
+
+      function getCategoryRequirementInfo(catId, m) {
+        const r = m.rule;
+        if (catId === "req_ge") {
+          return {
+            reqBadge: `이수기준: 필수교과 6과목(17학점) + 배분이수 5개 영역 중 3개 영역 이상에서 최소 3과목(9학점+) = 총 26학점 이상`,
+            statusBadge: `현재: 필수 ${m.coreGe.doneCnt}과목(${m.coreGe.doneCr}/17학점) · 배분 ${m.distGe.areasDone}개 영역 ${m.distGe.doneCnt}과목(${m.distGe.doneCr}/9학점+)`
+          };
+        }
+        if (catId === "free_ge") {
+          return {
+            reqBadge: `이수기준: 전공탐색세미나(1학점 필수) 포함 최소 1~2과목 이상 · 3학점 이상 (교양 전체 합산 29학점 이상 필수)`,
+            statusBadge: `현재: 자유이수 ${m.freeGe.doneCnt}과목(${m.freeGe.done}학점) · 교양 총합 ${m.ge.done}/29학점+`
+          };
+        }
+        if (catId === "major_basic") {
+          return {
+            reqBadge: state.curriculum === "2022"
+              ? `2022학번 기준: 7과목 · 21학점 필수 이수`
+              : `2026학번 개편 기준: 6과목 · 18학점 필수 이수`,
+            statusBadge: `현재: ${m.mb.doneCnt}과목 · ${m.mb.done}/${r.majorBasicReq}학점 완료 (희망포함 ${m.mb.both}학점)`
+          };
+        }
+        if (catId === "major_req") {
+          return {
+            reqBadge: state.curriculum === "2022"
+              ? `2022학번 기준: 8과목(졸업논문 포함) · 19학점 필수 이수 (초과학점은 전선 인정)`
+              : `2026학번 개편 기준: 최소 3과목 · 9학점 이상 필수 이수 (초과학점은 전선 자동 이월)`,
+            statusBadge: `현재: ${m.mr.doneCnt}과목 · ${m.mr.done}/${r.majorReqReq}학점 완료 (희망포함 ${m.mr.both}학점)`
+          };
+        }
+        if (catId === "major_elec") {
+          return {
+            reqBadge: state.curriculum === "2022"
+              ? `2022학번 기준: 최소 15과목 내외 · 45학점 이상 이수 (전공합계 85학점+, 전공핵심 8과목 중 5과목 권장)`
+              : `2026학번 개편 기준: 최소 18과목 내외 · 52학점 이상 이수 (전공합계 79학점+)`,
+            statusBadge: `현재: ${m.me.doneCnt}과목 · ${m.me.done}/${r.majorElecReq}학점 완료 (전필초과 ${m.me.excessDone}학점 포함 · 희망포함 ${m.me.both}학점)`
+          };
+        }
+        return {
+          reqBadge: `이수기준: 총 졸업학점(130학점) 중 교양·전공을 제외한 잔여 학점 (${r.genElecHint}학점 내외 자유 이수)`,
+          statusBadge: `현재: ${m.gen.doneCnt}과목 · ${m.gen.done}학점 완료 (희망포함 ${m.gen.both}학점)`
+        };
+      }
+
+      function renderCourseSections(m) {
+        const container = document.getElementById("courseSections");
+        const q = state.searchQuery.trim().toLowerCase();
+
+        const targetCats = state.activeCat === "all"
+          ? CATEGORIES
+          : CATEGORIES.filter(c => c.id === state.activeCat);
+
+        container.innerHTML = targetCats.map(cat => {
+          const filtered = state.courses.filter(c => {
+            if (c.cat !== cat.id) return false;
+            if (state.statusFilter === "legacy") {
+              if (!c.changeType && !c.changeBadge) return false;
+            } else if (state.statusFilter !== "all" && c.status !== state.statusFilter) {
+              return false;
+            }
+            if (state.semFilter && state.semFilter !== "all") {
+              if (c.status === "none" || c.sem !== state.semFilter) return false;
+            }
+            if (state.engOnly && !c.isEng) return false;
+            if (q && !(c.name.toLowerCase().includes(q) || (c.changeBadge || "").toLowerCase().includes(q))) return false;
+            return true;
+          });
+
+          const reqInfo = getCategoryRequirementInfo(cat.id, m);
+
+          let bodyHtml = "";
+          if (filtered.length === 0) {
+            bodyHtml = `<div class="empty-state">표시할 과목이 없습니다. 우측 '+ 과목 추가' 버튼으로 원하는 과목을 추가해 보세요.</div>`;
+          } else if (cat.id === "req_ge" || cat.id === "free_ge") {
+            const subOrder = cat.id === "req_ge"
+              ? ["core", "dist1", "dist2", "dist3", "dist4", "dist5"]
+              : ["free_sw", "free_art"];
+
+            bodyHtml = subOrder.map(subKey => {
+              const items = filtered.filter(c => (c.sub || (cat.id === "req_ge" ? "core" : "free_art")) === subKey);
+              if (items.length === 0) return "";
+              const sInfo = SUBGROUP_INFO[subKey];
+              const subDoneCr = items
+                .filter(c => c.status === "done" && GRADE_MAP[c.grade]?.pass)
+                .reduce((a, b) => a + (Number(b.credits) || 0), 0);
+              const subDoneCnt = items.filter(c => c.status === "done" && GRADE_MAP[c.grade]?.pass).length;
+              const isSubMet = subKey === "core" ? (subDoneCr + m.ge.bigBangSubBonus) >= 17 : subDoneCr >= 3;
+
+              return `
+                <div class="subarea-block">
+                  <div class="subarea-title ${isSubMet ? "met" : ""}">
+                    <span>${escapeHtml(sInfo.title)} — <span style="font-weight:500;">${escapeHtml(sInfo.reqText)}</span></span>
+                    <span>이수: ${subDoneCnt}과목 (${subDoneCr}학점)</span>
+                  </div>
+                  <div class="course-grid">
+                    ${items.map(renderCourseCard).join("")}
+                  </div>
+                </div>
+              `;
+            }).join("");
+          } else {
+            bodyHtml = `<div class="course-grid">${filtered.map(renderCourseCard).join("")}</div>`;
+          }
+
+          return `
+            <section class="category-section" data-cat-section="${cat.id}">
+              <div class="cat-header">
+                <div class="cat-title-wrap">
+                  <h2 class="cat-title">${escapeHtml(cat.label)}</h2>
+                  <span class="cat-req-badge">${escapeHtml(reqInfo.reqBadge)}</span>
+                  <span class="cat-meta">${escapeHtml(reqInfo.statusBadge)}</span>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary" data-add-cat="${cat.id}">+ 과목 추가</button>
+              </div>
+              ${bodyHtml}
+            </section>
+          `;
+        }).join("");
+      }
+
+      function renderCourseCard(c) {
+        const isActive = c.status === "done" || c.status === "plan";
+        const isMajor = ["major_basic", "major_req", "major_elec"].includes(c.cat);
+        const isLegacy = c.changeType === "closed" || c.changeType === "renamed" || c.changeType === "shifted";
+
+        const badges = [];
+        if (c.changeBadge) {
+          const cls = c.changeType || "renamed";
+          badges.push(`<span class="c-tag ${escapeHtml(cls)}">${escapeHtml(c.changeBadge)}</span>`);
+        }
+        if (c.core8) {
+          badges.push(`<span class="c-tag core8">전공핵심8</span>`);
+        }
+
+        let inputsHtml = "";
+        if (isActive) {
+          const gradeOptions = GRADES.map(g =>
+            `<option value="${g.value}" ${c.grade === g.value ? "selected" : ""}>${escapeHtml(g.label)}</option>`
+          ).join("");
+          const semOptions = SEM_OPTIONS.map(s =>
+            `<option value="${s}" ${(c.sem || "-") === s ? "selected" : ""}>${s === "-" ? "학기" : s}</option>`
+          ).join("");
+
+          inputsHtml = `
+            <div class="course-inline-inputs" data-stop-click="1">
+              <input type="number" class="mini-input" min="0" max="12" step="0.5" value="${Number(c.credits)}" data-action="edit-credits" title="이수 학점" aria-label="${escapeHtml(c.name)} 학점" />
+              <select class="mini-select" data-action="edit-grade" title="취득/목표 성적" aria-label="${escapeHtml(c.name)} 성적">
+                ${gradeOptions}
+              </select>
+              <select class="mini-sem" data-action="edit-sem" title="이수 학기" aria-label="${escapeHtml(c.name)} 이수 학기">
+                ${semOptions}
+              </select>
+              ${isMajor ? `<button type="button" class="mini-flag ${c.isEng ? "active" : ""}" data-action="toggle-eng" title="전공 영어강의 여부">ENG</button>` : ""}
+            </div>
+          `;
+        }
+
+        return `
+          <article class="course-card status-${c.status} ${isLegacy ? "is-legacy" : ""}" data-course-id="${escapeHtml(c.id)}" title="클릭하여 상태 전환 (미수강 → 수강완료 → 수강희망)">
+            <div class="course-top">
+              <div class="course-title-group">
+                <span class="course-name">${escapeHtml(c.name)}</span>
+                ${badges.length > 0 ? `<div class="course-badges">${badges.join("")}</div>` : ""}
+              </div>
+              <button type="button" class="del-x" data-action="delete-course" title="과목 삭제">✕</button>
+            </div>
+            <div class="course-bottom-slot">
+              ${inputsHtml}
+            </div>
+          </article>
+        `;
+      }
+
+      function openCourseModal(catId) {
+        const modal = document.getElementById("courseModalBackdrop");
+        const gradeSel = document.getElementById("fGrade");
+        gradeSel.innerHTML = GRADES.map(g => `<option value="${g.value}">${escapeHtml(g.label)}</option>`).join("");
+        document.getElementById("courseForm").reset();
+        document.getElementById("editCourseId").value = "";
+        const targetCat = catId || (state.activeCat !== "all" ? state.activeCat : "req_ge");
+        document.getElementById("fCategory").value = targetCat;
+        document.getElementById("fCredits").value = 3;
+        document.getElementById("fStatus").value = "done";
+        document.getElementById("fGrade").value = "A0";
+        modal.classList.add("open");
+      }
+
+      function closeCourseModal() {
+        document.getElementById("courseModalBackdrop").classList.remove("open");
+      }
+
+      // Event Listeners
+      document.getElementById("selCurrentSem").addEventListener("change", (e) => {
+        state.currentSem = Number(e.target.value) || 5;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("selMaxPerSem").addEventListener("change", (e) => {
+        state.maxPerSem = Number(e.target.value) || 18;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("btnCurr2022").addEventListener("click", () => {
+        state.curriculum = "2022";
+        saveState();
+        renderAll();
+        showToast("2022학번 교육과정 기준으로 전환했습니다.");
+      });
+
+      document.getElementById("btnCurr2026").addEventListener("click", () => {
+        state.curriculum = "2026";
+        saveState();
+        renderAll();
+        showToast("2026학번 개편 교육과정 기준으로 전환했습니다.");
+      });
+
+      document.getElementById("chkExcessToElec").addEventListener("change", (e) => {
+        state.excessToElec = e.target.checked;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("chkBigBangSub").addEventListener("change", (e) => {
+        state.bigBangSub = e.target.checked;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        state.searchQuery = e.target.value;
+        renderCourseSections(computeMetrics());
+      });
+
+      document.getElementById("statusFilter").addEventListener("change", (e) => {
+        state.statusFilter = e.target.value;
+        saveState();
+        renderCourseSections(computeMetrics());
+      });
+
+      document.getElementById("semFilter").addEventListener("change", (e) => {
+        state.semFilter = e.target.value;
+        saveState();
+        renderCourseSections(computeMetrics());
+      });
+
+      document.getElementById("engOnlyFilter").addEventListener("change", (e) => {
+        state.engOnly = e.target.checked;
+        saveState();
+        renderCourseSections(computeMetrics());
+      });
+
+      document.getElementById("catTabs").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-cat-tab]");
+        if (!btn) return;
+        state.activeCat = btn.dataset.catTab;
+        saveState();
+        renderCatTabs();
+        renderCourseSections(computeMetrics());
+      });
+
+      document.getElementById("checklistGrid").addEventListener("change", (e) => {
+        const sel = e.target.closest("[data-spec-select]");
+        if (sel) {
+          state.special[sel.dataset.specSelect] = sel.value;
+          saveState();
+          renderAll();
+          return;
+        }
+        const chk = e.target.closest("[data-spec-toggle]");
+        if (chk) {
+          state.special[chk.dataset.specToggle] = chk.checked;
+          saveState();
+          renderAll();
+        }
+      });
+
+      // Course Card Click & Inline Inputs
+      const sectionsEl = document.getElementById("courseSections");
+      sectionsEl.addEventListener("click", (e) => {
+        const addBtn = e.target.closest("[data-add-cat]");
+        if (addBtn) {
+          openCourseModal(addBtn.dataset.addCat);
+          return;
+        }
+
+        const card = e.target.closest("[data-course-id]");
+        if (!card) return;
+        const id = card.dataset.courseId;
+        const course = state.courses.find(c => c.id === id);
+        if (!course) return;
+
+        const actionEl = e.target.closest("[data-action]");
+        if (actionEl) {
+          const action = actionEl.dataset.action;
+          if (action === "delete-course") {
+            e.stopPropagation();
+            state.courses = state.courses.filter(c => c.id !== id);
+            saveState();
+            renderAll();
+            showToast(`'${course.name}' 과목을 삭제했습니다.`);
+            return;
+          }
+          if (action === "toggle-eng") {
+            e.stopPropagation();
+            course.isEng = !course.isEng;
+            saveState();
+            renderAll();
+            return;
+          }
+        }
+
+        if (e.target.closest("[data-stop-click]")) return;
+
+        // Cycle status on card click: none -> done -> plan -> none
+        const order = ["none", "done", "plan"];
+        course.status = order[(order.indexOf(course.status) + 1) % order.length];
+        saveState();
+        renderAll();
+      });
+
+      sectionsEl.addEventListener("change", (e) => {
+        const card = e.target.closest("[data-course-id]");
+        if (!card) return;
+        const course = state.courses.find(c => c.id === card.dataset.courseId);
+        if (!course) return;
+
+        const action = e.target.dataset.action;
+        if (action === "edit-credits") {
+          const val = parseFloat(e.target.value);
+          course.credits = isNaN(val) || val < 0 ? 0 : Math.min(12, val);
+          saveState();
+          renderAll();
+        } else if (action === "edit-grade") {
+          course.grade = e.target.value;
+          saveState();
+          renderAll();
+        } else if (action === "edit-sem") {
+          course.sem = e.target.value;
+          saveState();
+          renderAll();
+        }
+      });
+
+      // Modal Controls
+      document.getElementById("btnQuickAdd").addEventListener("click", () => openCourseModal(null));
+      document.getElementById("btnCloseCourseModal").addEventListener("click", closeCourseModal);
+      document.getElementById("btnCancelCourseModal").addEventListener("click", closeCourseModal);
+      document.getElementById("courseModalBackdrop").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeCourseModal();
+      });
+
+      document.getElementById("courseForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("fName").value.trim();
+        if (!name) return;
+        const cat = document.getElementById("fCategory").value;
+        const subRaw = document.getElementById("fSubgroup").value;
+        const sub = subRaw || (cat === "req_ge" ? "dist1" : cat === "free_ge" ? "free_art" : "");
+        const payload = {
+          id: "custom_" + Date.now(),
+          name,
+          cat,
+          sub,
+          credits: Math.max(0, Math.min(12, parseFloat(document.getElementById("fCredits").value) || 0)),
+          status: document.getElementById("fStatus").value,
+          grade: document.getElementById("fGrade").value,
+          sem: "-",
+          isEng: document.getElementById("fIsEng").checked,
+          isSw: sub === "free_sw",
+          changeType: "",
+          changeBadge: "직접추가"
+        };
+        state.courses.push(payload);
+        saveState();
+        closeCourseModal();
+        renderAll();
+        showToast(`'${name}' 과목을 추가했습니다.`);
+      });
+
+      // Export / Import / Reset
+      document.getElementById("btnExport").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `khu_me_graduation_audit_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("JSON 백업 파일을 저장했습니다.");
+      });
+
+      document.getElementById("btnImport").addEventListener("click", () => {
+        document.getElementById("fileImport").click();
+      });
+
+      document.getElementById("fileImport").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed || !Array.isArray(parsed.courses)) throw new Error("Invalid");
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+            state = loadState();
+            renderAll();
+            showToast("백업 데이터를 복원했습니다.");
+          } catch (err) {
+            showToast("유효한 JSON 파일이 아닙니다.");
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      document.getElementById("btnReset").addEventListener("click", () => {
+        document.getElementById("resetModalBackdrop").classList.add("open");
+      });
+      document.getElementById("btnCancelReset").addEventListener("click", () => {
+        document.getElementById("resetModalBackdrop").classList.remove("open");
+      });
+      document.getElementById("btnConfirmReset").addEventListener("click", () => {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem("khu_me_grad_audit_v2");
+        } catch (e) {}
+        state = defaultState();
+        saveState();
+        document.getElementById("resetModalBackdrop").classList.remove("open");
+        renderAll();
+        showToast("초기 상태로 되돌렸습니다.");
+      });
+
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
