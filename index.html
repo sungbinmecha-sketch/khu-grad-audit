@@ -14,6 +14,7 @@
       --surface: #ffffff;
       --surface-alt: #f8fafc;
       --border: #e2e8f0;
+      --border-strong: #cbd5e1;
       --text: #0f172a;
       --text-muted: #64748b;
       --done: #059669;
@@ -43,7 +44,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    button, input, select {
+    button, input, select, textarea {
       font-family: inherit;
       font-size: inherit;
     }
@@ -161,6 +162,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -212,6 +214,48 @@
     }
 
     .kpi-card.highlight { border-top: 3px solid var(--khu-red); }
+    .kpi-conv-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 2px;
+      padding-top: 5px;
+      border-top: 1px dashed var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .kpi-conv-row strong {
+      color: var(--khu-navy);
+      font-weight: 700;
+    }
+    .gpa-info-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--khu-navy);
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .gpa-info-btn:hover { background: #e2e8f0; }
+    .gpa-conv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin: 8px 0 12px;
+    }
+    .gpa-conv-table th, .gpa-conv-table td {
+      border: 1px solid var(--border);
+      padding: 5px 8px;
+      text-align: center;
+    }
+    .gpa-conv-table th {
+      background: var(--surface-alt);
+      color: var(--khu-navy);
+      font-weight: 700;
+    }
     .kpi-card.sem-card { border-top: 3px solid var(--plan); }
 
     .kpi-label {
@@ -334,6 +378,113 @@
       gap: 6px;
     }
 
+    .area-box.clickable {
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+    .area-box.clickable:hover {
+      border-color: var(--khu-navy);
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+    .lack-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #9a3412;
+      line-height: 1.55;
+    }
+    .lack-box.met {
+      background: #f0fdf4;
+      border-color: var(--done-border);
+      color: #166534;
+    }
+    .lack-box ul { margin: 5px 0 0 16px; padding: 0; }
+    .detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-alt);
+      font-size: 12px;
+    }
+    .detail-item.done { border-left: 3px solid var(--done); }
+    .detail-item.plan { border-left: 3px solid var(--plan); }
+    .detail-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .sem-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .sem-pill {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .sem-pill.active {
+      background: var(--khu-navy);
+      color: #fff;
+      border-color: var(--khu-navy);
+    }
+    .sem-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .sem-kpi-mini {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .sem-kpi-mini strong {
+      display: block;
+      font-size: 14px;
+      color: var(--khu-navy);
+      margin-top: 2px;
+    }
+    .sem-summary-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: #1e3a8a;
+    }
     .area-box.met {
       border-color: var(--done-border);
       background: #f0fdf4;
@@ -684,7 +835,6 @@
       box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
     }
 
-    /* Legacy / Renamed / Discontinued Course Distinction */
     .course-card.is-legacy {
       border-style: dashed;
       border-color: #cbd5e1;
@@ -776,7 +926,6 @@
     .course-card:hover .del-x { opacity: 1; }
     .del-x:hover { color: var(--danger); background: rgba(220, 38, 38, 0.1); }
 
-    /* Bottom Slot Always Reserves Space so Height Never Jumps */
     .course-bottom-slot {
       min-height: 26px;
       display: flex;
@@ -999,7 +1148,7 @@
   </header>
 
   <main class="container">
-    <!-- Top KPI Dashboard (5 Cards including Semester & Surplus Credits) -->
+    <!-- Top KPI Dashboard -->
     <section class="dashboard-grid" aria-label="실시간 학점, 학기 및 평점 요약">
       <div class="kpi-card highlight">
         <div class="kpi-label">
@@ -1038,7 +1187,7 @@
       <div class="kpi-card">
         <div class="kpi-label">
           <span>전체 평점 평균 (GPA)</span>
-          <span>4.30 만점</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;">4.30 만점 <button type="button" class="gpa-info-btn" id="btnGpaInfo" title="경희대 4.5·백분율 환산 기준">환산기준</button></span>
         </div>
         <div class="kpi-value-row">
           <span class="kpi-main" id="kpiAllGpaDone">0.00</span>
@@ -1047,6 +1196,10 @@
         <div class="kpi-split">
           <span>희망 포함: <strong class="text-plan" id="kpiAllGpaPlan">0.00</strong></span>
           <span id="kpiMinGpaStatus">기준 1.70+</span>
+        </div>
+        <div class="kpi-conv-row">
+          <span>4.5 환산 <strong id="kpiAllGpa45Done">0.00</strong> <span style="opacity:.75">(희망 <span id="kpiAllGpa45Plan">0.00</span>)</span></span>
+          <span>백분율 <strong id="kpiAllGpaPct">0.0</strong></span>
         </div>
       </div>
 
@@ -1062,6 +1215,10 @@
         <div class="kpi-split">
           <span>희망 포함: <strong class="text-plan" id="kpiMajorGpaPlan">0.00</strong></span>
           <span>전공학점: <strong id="kpiMajorTotalDone">0</strong>/<span id="kpiMajorTotalReq">85</span></span>
+        </div>
+        <div class="kpi-conv-row">
+          <span>4.5 환산 <strong id="kpiMajorGpa45Done">0.00</strong> <span style="opacity:.75">(희망 <span id="kpiMajorGpa45Plan">0.00</span>)</span></span>
+          <span>백분율 <strong id="kpiMajorGpaPct">0.0</strong></span>
         </div>
       </div>
 
@@ -1083,7 +1240,7 @@
     <!-- Area Breakdown -->
     <section class="panel" aria-label="영역별 학점 현황">
       <div class="panel-header">
-        <div class="panel-title">영역별 이수 학점 요약</div>
+        <div class="panel-title">영역별 이수 학점 요약 <span style="font-size:11.5px;font-weight:500;color:var(--text-muted);">(카드를 클릭하면 수강 과목과 부족한 요건을 볼 수 있습니다)</span></div>
         <div class="legend">
           <span class="guide-chip guide-none">미수강 (클릭→완료)</span>
           <span class="guide-chip guide-done">수강완료 (클릭→희망)</span>
@@ -1137,6 +1294,7 @@
           <option value="4-2">4-2 수강과목</option>
           <option value="계절">계절/기타</option>
         </select>
+        <button type="button" class="btn" id="btnSemSummary" title="선택한 학기의 수강 과목만 한눈에 모아보기">학기별 모아보기</button>
         <label class="check-pill">
           <input type="checkbox" id="engOnlyFilter" />
           <span>영어강의(ENG)만</span>
@@ -1267,6 +1425,86 @@
     </div>
   </div>
 
+  <!-- GPA Conversion Info Modal -->
+  <div class="modal-backdrop" id="gpaInfoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="gpaInfoModalTitle">
+    <div class="modal" style="max-width:540px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="gpaInfoModalTitle">경희대 4.5 만점 · 백분율 환산 기준</h2>
+        <button type="button" class="btn btn-sm" id="btnCloseGpaInfoModal" aria-label="닫기">✕</button>
+      </div>
+      <div style="font-size:12.5px; color:var(--text-muted); line-height:1.55;">
+        <p style="margin:0 0 6px;"><strong style="color:var(--khu-navy);">1) 4.5 만점 구간별 선형 환산</strong> (단순 비례 <code>× 4.5 / 4.3</code> 미사용)</p>
+        <p style="margin:0 0 6px;">4.3 만점의 13등급(+, 0, -) 체계를 4.5 만점 등급 기준에 대응시킨 구간별 선형 보간표를 적용합니다.</p>
+        <table class="gpa-conv-table">
+          <thead>
+            <tr>
+              <th>등급</th><th>A+</th><th>A0</th><th>A-</th><th>B+</th><th>B0</th><th>B-</th><th>C+</th><th>C0</th><th>C-</th><th>D+</th><th>D0</th><th>D-</th><th>F</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>4.3</th><td>4.30</td><td>4.00</td><td>3.70</td><td>3.30</td><td>3.00</td><td>2.70</td><td>2.30</td><td>2.00</td><td>1.70</td><td>1.30</td><td>1.00</td><td>0.70</td><td>0.00</td>
+            </tr>
+            <tr>
+              <th>4.5</th><td>4.50</td><td>4.25</td><td>4.00</td><td>3.50</td><td>3.25</td><td>3.00</td><td>2.50</td><td>2.25</td><td>2.00</td><td>1.50</td><td>1.25</td><td>1.00</td><td>0.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin:0 0 4px;"><strong style="color:var(--khu-navy);">2) 100점 백분율 환산</strong> (경희대학교 학사운영에 관한 규정 제34조 ③)</p>
+        <ul style="margin:4px 0 0 16px; padding:0; font-size:11.5px;">
+          <li>4.00 이상: <code>72 + (평점 - 0.7) × 28 / 3.6</code></li>
+          <li>3.70 ~ 4.00 미만: <code>69 + (평점 - 0.7) × 31 / 3.6</code></li>
+          <li>3.30 ~ 3.70 미만: <code>66 + (평점 - 0.7) × 34 / 3.6</code></li>
+          <li>3.00 ~ 3.30 미만: <code>65 + (평점 - 0.7) × 35 / 3.6</code></li>
+          <li>2.70 ~ 3.00 미만: <code>64 + (평점 - 0.7) × 36 / 3.6</code></li>
+          <li>2.70 미만: <code>63 + (평점 - 0.7) × 37 / 3.6</code></li>
+        </ul>
+      </div>
+      <div class="modal-footer" style="margin-top:12px;">
+        <button type="button" class="btn btn-primary" id="btnOkGpaInfoModal">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Area Detail Modal -->
+  <div class="modal-backdrop" id="areaModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="areaModalTitle">
+    <div class="modal" style="max-width:600px;">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2 class="modal-title" id="areaModalTitle">영역별 상세 현황</h2>
+          <span class="area-badge" id="areaModalBadge"></span>
+        </div>
+        <button type="button" class="btn btn-sm" id="btnCloseAreaModal" aria-label="닫기">✕</button>
+      </div>
+      <div id="areaModalLackBox" class="lack-box"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <strong style="font-size:12.5px;color:var(--khu-navy);">이수 · 수강희망 과목 모아보기</strong>
+        <span id="areaModalCount" style="font-size:11.5px;color:var(--text-muted);"></span>
+      </div>
+      <div id="areaModalCourseList" class="detail-list"></div>
+      <div class="modal-footer" style="margin-top:12px;">
+        <button type="button" class="btn btn-primary" id="btnOkAreaModal">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Semester Summary Modal -->
+  <div class="modal-backdrop" id="semModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="semModalTitle">
+    <div class="modal" style="max-width:620px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="semModalTitle">학기별 수강 과목 모아보기</h2>
+        <button type="button" class="btn btn-sm" id="btnCloseSemModal" aria-label="닫기">✕</button>
+      </div>
+      <div class="sem-pills" id="semModalPills"></div>
+      <div class="sem-kpi-strip" id="semModalKpi"></div>
+      <div id="semModalCourseList" class="detail-list"></div>
+      <div class="modal-footer" style="justify-content:space-between;margin-top:12px;">
+        <button type="button" class="btn" id="btnApplySemFilter">메인 화면에도 이 학기만 필터 적용</button>
+        <button type="button" class="btn btn-primary" id="btnOkSemModal">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -1359,13 +1597,13 @@
             sem: meta.sem || "-",
             isEng: false,
             isSw,
-            changeType: meta.changeType || "", // 'closed' | 'renamed' | 'shifted' | 'new26'
+            changeType: meta.changeType || "",
             changeBadge: meta.changeBadge || "",
             core8: !!meta.core8
           });
         };
 
-        // 1. 필수교과 (문명전개의 지구적 문맥 3과목 9학점 + 글쓰기 2과목 6학점 + 대학영어 2학점 = 6과목 17학점)
+        // 1. 필수교과
         add("c_hum1", "req_ge", "인간의 가치 탐색", 3, "core", "A0", false, { sem: "1-1" });
         add("c_hum2", "req_ge", "세계와 시민 (구 우리가 사는 세계)", 3, "core", "A0", false, {
           sem: "1-2", changeType: "renamed", changeBadge: "명칭통합 (구 우리가사는세계)"
@@ -1412,7 +1650,8 @@
           "모두를 위한 물리학", "비판적 사고란 무엇인가", "사고와 논리: 개념, 명제, 논증",
           "생각과 앎의 힘", "수와 문명: 문명을 바꾼 수학적 발견", "시민과학: 과학하는 시민",
           "인류의 큰 걸음: 과학사의 위대한 발견들", "제논의 역설에서 카오스 이론까지",
-          "질적연구와 데이터분석", "철학자를 위한 물리학", "통합적 사고론"
+          "질적연구와 데이터분석", "철학자를 위한 물리학", "통합적 사고론",
+          "고급미분적분학"
         ];
         dist2Names.forEach((n, i) => add(`d2_${i}`, "req_ge", n, 3, "dist2", "A0", n.includes("프로그래밍")));
 
@@ -1438,7 +1677,10 @@
           "르네상스: 예술의 혁명", "상징, 은유, 반어: 복잡성의 시학", "소셜네트워크: 소통과 집단지성",
           "시는 어떻게 내게로 오는가", "신화와 문화: 동서양", "언어와 비언어: 이미지, 상징, 아이콘",
           "영미문학읽기: 소설과 영화 가로지르기", "우리 문화유전자 읽기", "천개의 공감: 현대인의 심리분석",
-          "한국문학과 세계문학", "한국문화의 이해", "호모무지쿠스: 음악으로 경계 넘나들기"
+          "한국문학과 세계문학", "한국문화의 이해", "호모무지쿠스: 음악으로 경계 넘나들기",
+          "K-POP으로 사운드 맵 그리기", "고전읽기: 괴테", "고전읽기: 리처드 도킨스",
+          "고전읽기: 막스 베버", "고전읽기: 밀란 쿤데라", "고전읽기: 애덤 스미스",
+          "고전읽기: 에드워드 사이드", "고전읽기: 이규보", "고전읽기: 찰스 다윈", "고전읽기: 헤르만 헤세"
         ];
         dist3Names.forEach((n, i) => add(`d3_${i}`, "req_ge", n, 3, "dist3"));
 
@@ -1464,7 +1706,9 @@
           "미국 드라마로 보는 초강대국의 정치", "생명윤리, 찬성과 반대", "세계금융사",
           "세계의 공동체: 사례연구", "세계의 평화주의자들", "스포츠와 정치", "애타주의: 상호성의 윤리",
           "우리가 만들어가는 통일", "인권과 기억", "정의란 무엇인가", "지속가능한 평화를 위한 국제질서",
-          "한국의 역사와 문화", "한국의 이슈와 경제", "현대도시론", "호모에티쿠스: 윤리적 인간의 탄생"
+          "한국의 역사와 문화", "한국의 이슈와 경제", "현대도시론", "호모에티쿠스: 윤리적 인간의 탄생",
+          "기술발전에 변화하는 경영", "놀이를 통한 세상읽기",
+          "SDGs와 라틴 아메리카: 지속가능한 세계를 향한 남반구의 목소리"
         ];
         dist4Names.forEach((n, i) => add(`d4_${i}`, "req_ge", n, 3, "dist4"));
 
@@ -1482,9 +1726,12 @@
           "사막과 함께 살기: 기후변화와 전환사회", "에너지 문제와 과학기술의 역할",
           "인간과 도구: 기술문명의 전개", "인간-컴퓨터 중심세계", "인공지능과 라이프 3.0",
           "인공진화론, 기술의 시대를 살아가는 지혜", "인터넷과 법", "적정기술: 브리콜뢰르의 꿈",
-          "포스트휴먼 시대의 의료와 인간", "환경과 과학기술"
+          "포스트휴먼 시대의 의료와 인간", "환경과 과학기술",
+          "빅데이터의활용: 데이터분석과 시각화 (데이터분석 및 정보시각화)",
+          "지능화된 사회: ChatGPT를 활용한 생성형 AI",
+          "온라인 군중심리와 감정 알고리즘", "Java로 배우는 논리적 사유", "자연어처리와 텍스트마이닝"
         ];
-        dist5Names.forEach((n, i) => add(`d5_${i}`, "req_ge", n, 3, "dist5", "A0", n.includes("프로그래밍") || n.includes("코딩") || n.includes("인공지능") || n.includes("빅데이터")));
+        dist5Names.forEach((n, i) => add(`d5_${i}`, "req_ge", n, 3, "dist5", "A0", n.includes("프로그래밍") || n.includes("코딩") || n.includes("인공지능") || n.includes("빅데이터") || n.includes("AI") || n.includes("Java") || n.includes("텍스트마이닝")));
 
         // 2. 자유이수 교양
         add("f_sem", "free_ge", "전공탐색 및 기업가정신세미나 (구 전공탐색세미나)", 1, "free_sw", "P", false, {
@@ -1498,7 +1745,8 @@
           "인공지능을 위한 기계학습", "파이썬과 데이터마이닝", "학습과 사고: 파이썬과 딥러닝",
           "C#을 통한 창의적 사고", "앱인벤터로 배우는 코딩세상", "소프트웨어 개발자를 위한 C프로그래밍",
           "4차산업혁명의 변화: 사물인터넷", "인터넷과 메타버스", "인터넷과 미디어콘텐츠 기술",
-          "게임과 네트워크: 이론과 코딩", "컴퓨터게임개론: 이론과 기술", "사물인터넷과 미래사회"
+          "게임과 네트워크: 이론과 코딩", "컴퓨터게임개론: 이론과 기술", "사물인터넷과 미래사회",
+          "게임과 디지털 내러티브", "빅데이터를 통한 세상 바로알기: R로 배우는 데이터분석코딩"
         ];
         freeSwNames.forEach((n, i) => add(`fsw_${i}`, "free_ge", n, 3, "free_sw", "A0", true));
 
@@ -1520,7 +1768,10 @@
           "사진의 이해와 감상", "소설창작교실", "시나리오창작교실", "시창작교실", "출판편집교실",
           "르포르타주: 가려진 세계의 보고서", "오케스트라의 오늘", "우리가락으로 만나는 세상",
           "재즈음악의 이해와 감상", "춤으로 만나는 한류, K-POP댄스", "클래식기타의 연주와 감상",
-          "포스트모던 아트 읽기", "현대미술 라운드테이블", "현대회화실기"
+          "포스트모던 아트 읽기", "현대미술 라운드테이블", "현대회화실기",
+          "다시 시작하는 피아노 레슨", "움직임과 소통, 국립현대무용단과 함께",
+          "싱어송라이터교실", "실내악, 벗들의 음악", "영화제작 기초", "춤으로 만나는 인류",
+          "응급처치 및 전문 관리론"
         ];
         freeGen3Names.forEach((n, i) => add(`fg3_${i}`, "free_ge", n, 3, "free_art"));
 
@@ -1540,7 +1791,7 @@
         ];
         freeGen1Names.forEach((n, i) => add(`fg1_${i}`, "free_ge", n, 1, "free_art"));
 
-        // 3. 전공기초 (22학번: 7과목 21학점 / 25~26학번 개편: 6과목 18학점)
+        // 3. 전공기초
         add("mb_calc", "major_basic", "미분적분학", 3, "", "A0", false, { sem: "1-1" });
         add("mb_phy1", "major_basic", "물리학 1", 3, "", "A0", false, { sem: "1-1" });
         add("mb_phy2", "major_basic", "물리학 2", 3, "", "A0", false, {
@@ -1553,7 +1804,7 @@
           sem: "2-1", changeType: "renamed", changeBadge: "명칭변경·SW인정 (구 공프입)"
         });
 
-        // 4. 전공필수 (22학번: 8과목 19학점 / 25~26학번 개편: 9학점)
+        // 4. 전공필수
         add("mr_fed",    "major_req", "디자인사고 (구 기초공학설계)", 3, "", "A0", false, {
           sem: "1-2", changeType: "renamed", changeBadge: "명칭·구분개편 (구 기초공학설계)"
         });
@@ -1572,6 +1823,9 @@
         add("mr_dyn",    "major_req", "동역학", 3, "", "A0", false, {
           sem: "2-2", changeBadge: "4대역학 핵심"
         });
+        add("mr_adv_exp", "major_req", "첨단기계공학실험", 2, "", "A0", false, {
+          sem: "3-2", changeType: "new26", changeBadge: "실험 필수 · 22/26 구분 확인"
+        });
         add("mr_sem",    "major_req", "기계공학윤강 (세미나)", 1, "", "A0", false, {
           sem: "3-1", changeType: "closed", changeBadge: "22전필(1학점) · 26개편 제외"
         });
@@ -1579,7 +1833,7 @@
           sem: "4-2", changeBadge: "0학점 P/NP 필수"
         });
 
-        // 5. 전공선택 (기계공학부 기존 40과목 + 폐지/변경 표기 + 25/26 신설 트랙 과목 + 타전공 인정)
+        // 5. 전공선택
         const meList = [
           { n: "정역학", cr: 3, sem: "1-2", changeType: "closed", changeBadge: "폐지 (기이수 전공선택 인정)" },
           { n: "공학수학 3", cr: 3, sem: "2-2", core8: true },
@@ -1693,8 +1947,8 @@
       function defaultState() {
         return {
           curriculum: "2022",
-          currentSem: 5, // 기본값: 3학년 1학기 (5학기)
-          maxPerSem: 18, // 기계공학부 학기당 기본 최대학점 18학점
+          currentSem: 5,
+          maxPerSem: 18,
           excessToElec: true,
           bigBangSub: false,
           activeCat: "all",
@@ -1773,10 +2027,54 @@
 
       function showToast(msg) {
         const el = document.getElementById("toast");
+        if (!el) return;
         el.textContent = msg;
         el.classList.add("show");
         clearTimeout(showToast._t);
         showToast._t = setTimeout(() => el.classList.remove("show"), 2000);
+      }
+
+      const GPA_43_TO_45_ANCHORS = [
+        [0.00, 0.00],
+        [0.30, 0.50],
+        [0.70, 1.00],
+        [1.00, 1.25],
+        [1.30, 1.50],
+        [1.70, 2.00],
+        [2.00, 2.25],
+        [2.30, 2.50],
+        [2.70, 3.00],
+        [3.00, 3.25],
+        [3.30, 3.50],
+        [3.70, 4.00],
+        [4.00, 4.25],
+        [4.30, 4.50]
+      ];
+
+      function convertGpa43To45(gpa43) {
+        if (!gpa43 || gpa43 <= 0) return 0;
+        const x = Math.min(4.30, Math.max(0, gpa43));
+        for (let i = 1; i < GPA_43_TO_45_ANCHORS.length; i++) {
+          const [x0, y0] = GPA_43_TO_45_ANCHORS[i - 1];
+          const [x1, y1] = GPA_43_TO_45_ANCHORS[i];
+          if (x <= x1) {
+            return y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+          }
+        }
+        return 4.50;
+      }
+
+      function convertGpa43ToPct(gpa43) {
+        if (!gpa43 || gpa43 <= 0) return 0;
+        const g = Math.min(4.30, Math.max(0, gpa43));
+        let base = 63, num = 37;
+        if (g >= 4.00) { base = 72; num = 28; }
+        else if (g >= 3.70) { base = 69; num = 31; }
+        else if (g >= 3.30) { base = 66; num = 34; }
+        else if (g >= 3.00) { base = 65; num = 35; }
+        else if (g >= 2.70) { base = 64; num = 36; }
+        const pct = base + ((g - 0.7) * num) / 3.6;
+        return Math.min(100, Math.max(0, pct));
       }
 
       function computeMetrics() {
@@ -1796,7 +2094,6 @@
         const reqGe = sumBy("req_ge");
         const freeGe = sumBy("free_ge");
 
-        // Big Bang substitution check (미분적분학 or 물리학 1 completed -> substitutes 빅뱅에서 문명까지 3cr for area fulfillment, not double-counted in total 130)
         const calcOrPhy1Done = state.courses.some(c =>
           (c.id === "mb_calc" || c.id === "mb_phy1") && c.status === "done" && GRADE_MAP[c.grade]?.pass
         );
@@ -1851,11 +2148,9 @@
         const majorTotalDone = mb.done + mr.done + me.done;
         const majorTotalBoth = mb.both + mr.both + me.both;
 
-        // Total graduation credits never double-count bigBangSubBonus
         const totalDone = geRawDone + majorTotalDone + gen.done;
         const totalBoth = geRawBoth + majorTotalBoth + gen.both;
 
-        // Remaining Semesters & Surplus Credit Calculation
         const curSem = Number(state.currentSem) || 5;
         const maxPerSem = Number(state.maxPerSem) || 18;
         const remainSemesters = curSem <= 8 ? Math.max(0, 8 - curSem) : 1;
@@ -1863,7 +2158,7 @@
         const neededCreditsDone = Math.max(0, rule.totalReq - totalDone);
         const neededCreditsAfterPlan = Math.max(0, rule.totalReq - totalBoth);
         const avgNeededPerSem = remainSemesters > 0 ? (neededCreditsDone / remainSemesters) : neededCreditsDone;
-        const surplusCredits = maxAvailableCredits - neededCreditsDone; // 양수면 잉여(여유) 학점, 음수면 초과 필요 학점
+        const surplusCredits = maxAvailableCredits - neededCreditsDone;
 
         function calcGpa(includePlan, majorOnly) {
           let pts = 0, crSum = 0;
@@ -1878,7 +2173,13 @@
             pts += cr * g.point;
             crSum += cr;
           });
-          return { gpa: crSum > 0 ? pts / crSum : 0, credits: crSum };
+          const gpa = crSum > 0 ? pts / crSum : 0;
+          return {
+            gpa,
+            gpa45: crSum > 0 ? convertGpa43To45(gpa) : 0,
+            pct: crSum > 0 ? convertGpa43ToPct(gpa) : 0,
+            credits: crSum
+          };
         }
 
         const allGpaDone = calcGpa(false, false);
@@ -1902,14 +2203,12 @@
           }
         });
 
-        // Thesis / Capstone 4 required courses auto-detection
-        const thesisReqIds = ["me_9", "me_11", "me_30", "mr_thesis"]; // 프로젝트및세미나, 기계공학실험, 기계공학종합설계1, 졸업논문
+        const thesisReqIds = ["me_9", "me_11", "me_30", "mr_thesis"];
         const thesisAutoCount = thesisReqIds.filter(id => {
           const c = state.courses.find(x => x.id === id);
           return c && c.status === "done" && GRADE_MAP[c.grade]?.pass;
         }).length;
 
-        // Core 8 Major Elective recommendation check
         const core8Courses = state.courses.filter(c => c.core8);
         const core8DoneCount = core8Courses.filter(c => c.status === "done" && GRADE_MAP[c.grade]?.pass).length;
 
@@ -1993,7 +2292,6 @@
           badge.textContent = Math.max(0, m.total.req - m.total.done) + "학점 부족";
         }
 
-        // Semester & Surplus Card
         const si = m.semInfo;
         const semBadge = document.getElementById("kpiSemLabel");
         semBadge.textContent = si.curSem <= 8 ? `잔여 ${si.remainSemesters}학기 (8학기 기준)` : "초과학기";
@@ -2011,6 +2309,9 @@
         document.getElementById("kpiAllGpaDone").textContent = m.allGpaDone.gpa.toFixed(2);
         document.getElementById("kpiAllGpaCredits").textContent = `(${m.allGpaDone.credits}학점)`;
         document.getElementById("kpiAllGpaPlan").textContent = m.allGpaPlan.gpa.toFixed(2);
+        document.getElementById("kpiAllGpa45Done").textContent = m.allGpaDone.gpa45.toFixed(2);
+        document.getElementById("kpiAllGpa45Plan").textContent = m.allGpaPlan.gpa45.toFixed(2);
+        document.getElementById("kpiAllGpaPct").textContent = m.allGpaDone.pct.toFixed(1) + "점";
         const minGpaEl = document.getElementById("kpiMinGpaStatus");
         if (m.allGpaDone.credits === 0) {
           minGpaEl.textContent = "기준 1.70+";
@@ -2026,6 +2327,9 @@
         document.getElementById("kpiMajorGpaDone").textContent = m.majorGpaDone.gpa.toFixed(2);
         document.getElementById("kpiMajorGpaCredits").textContent = `(${m.majorGpaDone.credits}학점)`;
         document.getElementById("kpiMajorGpaPlan").textContent = m.majorGpaPlan.gpa.toFixed(2);
+        document.getElementById("kpiMajorGpa45Done").textContent = m.majorGpaDone.gpa45.toFixed(2);
+        document.getElementById("kpiMajorGpa45Plan").textContent = m.majorGpaPlan.gpa45.toFixed(2);
+        document.getElementById("kpiMajorGpaPct").textContent = m.majorGpaDone.pct.toFixed(1) + "점";
         document.getElementById("kpiMajorTotalDone").textContent = m.majorTotal.done;
         document.getElementById("kpiMajorTotalReq").textContent = m.majorTotal.req;
         document.getElementById("kpiCurrLabel").textContent = state.curriculum + "학번 기준";
@@ -2056,6 +2360,7 @@
         const r = m.rule;
         const areas = [
           {
+            key: "ge",
             title: "교양 (필수+배분+자유)",
             req: r.geReq,
             done: m.ge.done,
@@ -2063,6 +2368,7 @@
             sub: `필수17 · 배분3영역(9+) · 자유3+ ${m.ge.bigBangSubBonus ? "(빅뱅대체+3 반영)" : ""}`
           },
           {
+            key: "major_basic",
             title: `전공기초 (${r.majorBasicCourses}과목)`,
             req: r.majorBasicReq,
             done: m.mb.done,
@@ -2070,6 +2376,7 @@
             sub: `기준: ${r.majorBasicCourses}과목 ${r.majorBasicReq}학점 (완료 ${m.mb.doneCnt}과목)`
           },
           {
+            key: "major_req",
             title: `전공필수 (${r.majorReqCourses}과목)`,
             req: r.majorReqReq,
             done: m.mr.done,
@@ -2077,6 +2384,7 @@
             sub: m.me.excessDone > 0 ? `초과 ${m.me.excessDone}학점 전선 자동이월` : `기준: ${r.majorReqCourses}과목 ${r.majorReqReq}학점`
           },
           {
+            key: "major_elec",
             title: `전공선택 (${r.majorElecCourses}과목+)`,
             req: r.majorElecReq,
             done: m.me.done,
@@ -2084,6 +2392,7 @@
             sub: `기준: ${r.majorElecReq}학점+ (전공합계 ${m.majorTotal.done}/${r.majorTotalReq}학점)`
           },
           {
+            key: "gen_elec",
             title: "일반선택 (잔여학점)",
             req: r.genElecHint,
             done: m.gen.done,
@@ -2109,7 +2418,7 @@
             badgeTxt = "예정 충족";
           }
           return `
-            <div class="area-box ${!a.isOptional && a.done >= a.req ? "met" : ""}">
+            <div class="area-box clickable ${!a.isOptional && a.done >= a.req ? "met" : ""}" data-area-key="${a.key}" role="button" tabindex="0" title="클릭해 수강 과목 및 부족 요건 확인">
               <div class="area-box-top">
                 <span class="area-name">${escapeHtml(a.title)}</span>
                 <span class="area-badge ${badgeCls}">${escapeHtml(badgeTxt)}</span>
@@ -2124,12 +2433,11 @@
                 <span>희망포함: <strong class="text-plan">${a.both}</strong></span>
                 <span>부족: <strong>${a.isOptional ? "-" : remain}</strong></span>
               </div>
-              <div style="font-size:10.5px; color:var(--text-muted);">${escapeHtml(a.sub)}</div>
+              <div style="font-size:10.5px; color:var(--text-muted); display:flex; justify-content:space-between; gap:4px;"><span>${escapeHtml(a.sub)}</span><span style="color:var(--khu-navy);font-weight:600;white-space:nowrap;">상세 ↗</span></div>
             </div>
           `;
         }).join("");
 
-        // Core 8 Major Courses Bar ( 시행세칙 제12조 전공핵심 8과목 중 5과목 권장 )
         const core8El = document.getElementById("core8Bar");
         core8El.innerHTML = `
           <div>
@@ -2337,7 +2645,27 @@
           ? CATEGORIES
           : CATEGORIES.filter(c => c.id === state.activeCat);
 
-        container.innerHTML = targetCats.map(cat => {
+        let semBannerHtml = "";
+        if (state.semFilter && state.semFilter !== "all") {
+          const semItems = state.courses.filter(c => c.status !== "none" && c.sem === state.semFilter);
+          let semCr = 0, semPts = 0, semGpaCr = 0;
+          semItems.forEach(c => {
+            const g = GRADE_MAP[c.grade] || GRADE_MAP["A0"];
+            const cr = Number(c.credits) || 0;
+            if (g.pass) semCr += cr;
+            if (g.gpa && cr > 0) { semPts += cr * g.point; semGpaCr += cr; }
+          });
+          const sGpa43 = semGpaCr > 0 ? semPts / semGpaCr : 0;
+          const sGpa45 = semGpaCr > 0 ? convertGpa43To45(sGpa43) : 0;
+          semBannerHtml = `
+            <div class="sem-summary-banner">
+              <div><strong>${escapeHtml(state.semFilter)} 학기 수강 과목 모아보기</strong> · 총 <strong>${semItems.length}과목</strong> · <strong>${semCr}학점</strong> · 평점 <strong>${sGpa43.toFixed(2)}</strong>/4.3 (4.5 환산 <strong>${sGpa45.toFixed(2)}</strong>)</div>
+              <button type="button" class="btn btn-sm" id="btnResetSemFilterInline">전체 학기 보기</button>
+            </div>
+          `;
+        }
+
+        const sectionsHtml = targetCats.map(cat => {
           const filtered = state.courses.filter(c => {
             if (c.cat !== cat.id) return false;
             if (state.statusFilter === "legacy") {
@@ -2355,6 +2683,9 @@
 
           const reqInfo = getCategoryRequirementInfo(cat.id, m);
 
+          if (state.semFilter && state.semFilter !== "all" && filtered.length === 0) {
+            return "";
+          }
           let bodyHtml = "";
           if (filtered.length === 0) {
             bodyHtml = `<div class="empty-state">표시할 과목이 없습니다. 우측 '+ 과목 추가' 버튼으로 원하는 과목을 추가해 보세요.</div>`;
@@ -2403,6 +2734,17 @@
             </section>
           `;
         }).join("");
+
+        container.innerHTML = semBannerHtml + (sectionsHtml || `<div class="empty-state">선택한 학기에 수강·희망 등록된 과목이 없습니다.</div>`);
+        const resetSemBtn = document.getElementById("btnResetSemFilterInline");
+        if (resetSemBtn) {
+          resetSemBtn.addEventListener("click", () => {
+            state.semFilter = "all";
+            document.getElementById("semFilter").value = "all";
+            saveState();
+            renderCourseSections(computeMetrics());
+          });
+        }
       }
 
       function renderCourseCard(c) {
@@ -2563,7 +2905,6 @@
         }
       });
 
-      // Course Card Click & Inline Inputs
       const sectionsEl = document.getElementById("courseSections");
       sectionsEl.addEventListener("click", (e) => {
         const addBtn = e.target.closest("[data-add-cat]");
@@ -2600,7 +2941,6 @@
 
         if (e.target.closest("[data-stop-click]")) return;
 
-        // Cycle status on card click: none -> done -> plan -> none
         const order = ["none", "done", "plan"];
         course.status = order[(order.indexOf(course.status) + 1) % order.length];
         saveState();
@@ -2724,6 +3064,217 @@
         showToast("초기 상태로 되돌렸습니다.");
       });
 
+      // GPA Conversion Info Modal
+      (() => {
+        const backdrop = document.getElementById("gpaInfoModalBackdrop");
+        const openBtn = document.getElementById("btnGpaInfo");
+        const closeBtn = document.getElementById("btnCloseGpaInfoModal");
+        const okBtn = document.getElementById("btnOkGpaInfoModal");
+        if (!backdrop || !openBtn) return;
+        const close = () => backdrop.classList.remove("open");
+        openBtn.addEventListener("click", () => backdrop.classList.add("open"));
+        if (closeBtn) closeBtn.addEventListener("click", close);
+        if (okBtn) okBtn.addEventListener("click", close);
+        backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+      })();
+
+      // Area Detail & Semester Summary Modals
+      function renderCourseDetailItems(items) {
+        if (!items.length) {
+          return `<div class="empty-state" style="padding:18px;">해당 조건에 등록된(수강완료/수강희망) 과목이 없습니다.</div>`;
+        }
+        const sorted = [...items].sort((a, b) => {
+          if (a.status !== b.status) return a.status === "done" ? -1 : 1;
+          return (a.sem || "").localeCompare(b.sem || "");
+        });
+        return sorted.map(c => {
+          const stLabel = c.status === "done" ? "수강완료" : "수강희망";
+          const stCls = c.status === "done" ? "badge-ok" : "badge-plan";
+          const subTitle = c.sub && SUBGROUP_INFO[c.sub] ? SUBGROUP_INFO[c.sub].title.split(":")[0].split("(")[0].trim() : (CATEGORIES.find(x => x.id === c.cat)?.label || "");
+          return `
+            <div class="detail-item ${c.status}">
+              <div>
+                <div style="font-weight:700;color:var(--khu-navy);">${escapeHtml(c.name)}</div>
+                <div class="detail-item-meta">
+                  <span>${escapeHtml(subTitle)}</span>
+                  <span>· ${c.credits}학점</span>
+                  ${c.sem && c.sem !== "-" ? `<span>· ${escapeHtml(c.sem)}</span>` : ""}
+                  ${c.isEng ? `<span>· ENG</span>` : ""}
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
+                <span style="font-weight:700;color:var(--khu-navy);">${escapeHtml(c.grade || "A0")}</span>
+                <span class="area-badge ${stCls}">${stLabel}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function openAreaDetailModal(areaKey) {
+        const m = computeMetrics();
+        const r = m.rule;
+        const backdrop = document.getElementById("areaModalBackdrop");
+        const titleEl = document.getElementById("areaModalTitle");
+        const badgeEl = document.getElementById("areaModalBadge");
+        const lackEl = document.getElementById("areaModalLackBox");
+        const listEl = document.getElementById("areaModalCourseList");
+        const cntEl = document.getElementById("areaModalCount");
+
+        let title = "", items = [], req = 0, done = 0, both = 0, lackLines = [], isMet = false;
+
+        if (areaKey === "ge") {
+          title = "교양 (필수+배분+자유) 상세";
+          req = r.geReq; done = m.ge.done; both = m.ge.both;
+          items = state.courses.filter(c => (c.cat === "req_ge" || c.cat === "free_ge") && c.status !== "none");
+          isMet = done >= req && m.coreGe.doneCr >= r.geCoreReq && m.distGe.areasDone >= r.geDistAreasReq && m.distGe.doneCr >= r.geDistCreditsReq && m.freeGe.done >= r.geFreeReq;
+
+          if (done < req) lackLines.push(`총 교양 학점: <strong>${req - done}학점 부족</strong> (완료 ${done}/${req}학점, 희망포함 ${both}학점)`);
+          if (m.coreGe.doneCr < r.geCoreReq) {
+            const missingCore = state.courses.filter(c => c.cat === "req_ge" && c.sub === "core" && c.status !== "done" && !(m.ge.bigBangSubBonus && c.id === "c_hum3"));
+            const names = missingCore.slice(0, 6).map(c => c.name.split("(")[0].trim()).join(", ");
+            lackLines.push(`필수교양: <strong>${r.geCoreReq - m.coreGe.doneCr}학점 부족</strong> (${m.coreGe.doneCr}/${r.geCoreReq}학점) — 미이수 후보: ${escapeHtml(names || "과목 확인")}`);
+          }
+          if (m.distGe.areasDone < r.geDistAreasReq || m.distGe.doneCr < r.geDistCreditsReq) {
+            const allDists = ["dist1", "dist2", "dist3", "dist4", "dist5"];
+            const doneDists = new Set(state.courses.filter(c => c.cat === "req_ge" && String(c.sub).startsWith("dist") && c.status === "done" && GRADE_MAP[c.grade]?.pass).map(c => c.sub));
+            const missingDists = allDists.filter(d => !doneDists.has(d)).map(d => SUBGROUP_INFO[d]?.title.replace("배분이수 ", "") || d);
+            lackLines.push(`배분이수: <strong>${Math.max(0, r.geDistAreasReq - m.distGe.areasDone)}영역 / ${Math.max(0, r.geDistCreditsReq - m.distGe.doneCr)}학점 부족</strong> (현재 ${m.distGe.areasDone}/${r.geDistAreasReq}영역, ${m.distGe.doneCr}/${r.geDistCreditsReq}학점) — 미이수 영역: ${escapeHtml(missingDists.join(" · "))}`);
+          }
+          if (m.freeGe.done < r.geFreeReq) {
+            lackLines.push(`자유이수: <strong>${r.geFreeReq - m.freeGe.done}학점 부족</strong> (${m.freeGe.done}/${r.geFreeReq}학점)`);
+          }
+        } else if (areaKey === "major_basic") {
+          title = `전공기초 (${r.majorBasicCourses}과목) 상세`;
+          req = r.majorBasicReq; done = m.mb.done; both = m.mb.both;
+          items = state.courses.filter(c => c.cat === "major_basic" && c.status !== "none");
+          isMet = done >= req;
+          if (!isMet) {
+            const missingMb = state.courses.filter(c => c.cat === "major_basic" && c.status !== "done" && c.changeType !== "removed").map(c => `${c.name.split("(")[0].trim()}(${c.credits})`);
+            lackLines.push(`전공기초 학점: <strong>${req - done}학점 부족</strong> (완료 ${done}/${req}학점, ${m.mb.doneCnt}/${r.majorBasicCourses}과목)`);
+            if (missingMb.length) lackLines.push(`미이수 전공기초 과목: ${escapeHtml(missingMb.join(", "))}`);
+          }
+        } else if (areaKey === "major_req") {
+          title = `전공필수 (${r.majorReqCourses}과목) 상세`;
+          req = r.majorReqReq; done = m.mr.done; both = m.mr.both;
+          items = state.courses.filter(c => c.cat === "major_req" && c.status !== "none");
+          isMet = done >= req;
+          if (!isMet) {
+            const missingMr = state.courses.filter(c => c.cat === "major_req" && c.status !== "done" && c.changeType !== "removed").map(c => `${c.name.split("(")[0].trim()}(${c.credits})`);
+            lackLines.push(`전공필수 학점: <strong>${req - done}학점 부족</strong> (완료 ${done}/${req}학점)`);
+            if (missingMr.length) lackLines.push(`미이수 전공필수 후보: ${escapeHtml(missingMr.join(", "))}`);
+          }
+        } else if (areaKey === "major_elec") {
+          title = `전공선택 (${r.majorElecCourses}과목+) 상세`;
+          req = r.majorElecReq; done = m.me.done; both = m.me.both;
+          items = state.courses.filter(c => c.cat === "major_elec" && c.status !== "none");
+          isMet = done >= req && m.majorTotal.done >= r.majorTotalReq;
+          if (done < req) lackLines.push(`전공선택 학점: <strong>${req - done}학점 부족</strong> (완료 ${done}/${req}학점${m.me.excessDone > 0 ? `, 전필 초과이월 ${m.me.excessDone}학점 포함` : ""})`);
+          if (m.majorTotal.done < r.majorTotalReq) lackLines.push(`총 전공학점(기초+필수+선택): <strong>${r.majorTotalReq - m.majorTotal.done}학점 부족</strong> (${m.majorTotal.done}/${r.majorTotalReq}학점)`);
+          if (m.core8DoneCount < 5) {
+            const missingCore8 = m.core8Courses.filter(c => c.status !== "done").map(c => c.name.split(" (")[0]);
+            lackLines.push(`전공핵심 8과목 권장(5과목+): 현재 ${m.core8DoneCount}/5과목 — 미수강: ${escapeHtml(missingCore8.join(", "))}`);
+          }
+        } else {
+          title = "일반선택 (잔여학점) 상세";
+          req = r.genElecHint; done = m.gen.done; both = m.gen.both;
+          items = state.courses.filter(c => c.cat === "gen_elec" && c.status !== "none");
+          isMet = m.total.done >= r.totalReq;
+          if (!isMet) {
+            lackLines.push(`총 졸업학점(130학점) 기준 현재 <strong>${Math.max(0, r.totalReq - m.total.done)}학점</strong>이 더 필요합니다. 타 영역 초과 학점이나 일반선택 과목으로 채울 수 있습니다.`);
+          }
+        }
+
+        titleEl.textContent = title;
+        if (isMet) {
+          badgeEl.className = "area-badge badge-ok";
+          badgeEl.textContent = "요건 충족";
+          lackEl.className = "lack-box met";
+          lackEl.innerHTML = `<strong>이 영역의 졸업 요건을 모두 충족했습니다.</strong> (완료 ${done}학점)`;
+        } else {
+          badgeEl.className = both >= req ? "area-badge badge-plan" : "area-badge badge-lack";
+          badgeEl.textContent = both >= req ? "예정 충족" : `${Math.max(0, req - done)}학점 부족`;
+          lackEl.className = "lack-box";
+          lackEl.innerHTML = `<strong>부족한 요건 안내</strong><ul>${lackLines.map(l => `<li>${l}</li>`).join("")}</ul>`;
+        }
+
+        cntEl.textContent = `총 ${items.length}과목 (완료 ${items.filter(x => x.status === "done").length} · 희망 ${items.filter(x => x.status === "plan").length})`;
+        listEl.innerHTML = renderCourseDetailItems(items);
+        backdrop.classList.add("open");
+      }
+
+      document.getElementById("areaGrid").addEventListener("click", (e) => {
+        const box = e.target.closest(".area-box[data-area-key]");
+        if (box) openAreaDetailModal(box.dataset.areaKey);
+      });
+      document.getElementById("areaGrid").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const box = e.target.closest(".area-box[data-area-key]");
+          if (box) { e.preventDefault(); openAreaDetailModal(box.dataset.areaKey); }
+        }
+      });
+      (() => {
+        const b = document.getElementById("areaModalBackdrop");
+        if (!b) return;
+        const close = () => b.classList.remove("open");
+        document.getElementById("btnCloseAreaModal").addEventListener("click", close);
+        document.getElementById("btnOkAreaModal").addEventListener("click", close);
+        b.addEventListener("click", (e) => { if (e.target === b) close(); });
+      })();
+
+      // Semester Summary Modal
+      let activeModalSem = "1-1";
+      const SEM_LIST = ["1-1", "1-2", "2-1", "2-2", "3-1", "3-2", "4-1", "4-2", "계절"];
+      function renderSemModal(sem) {
+        activeModalSem = sem;
+        document.getElementById("semModalPills").innerHTML = SEM_LIST.map(s =>
+          `<button type="button" class="sem-pill ${s === sem ? "active" : ""}" data-sem="${s}">${s}</button>`
+        ).join("");
+        const items = state.courses.filter(c => c.status !== "none" && c.sem === sem);
+        let crSum = 0, pts = 0, gpaCr = 0;
+        items.forEach(c => {
+          const g = GRADE_MAP[c.grade] || GRADE_MAP["A0"];
+          const cr = Number(c.credits) || 0;
+          if (g.pass) crSum += cr;
+          if (g.gpa && cr > 0) { pts += cr * g.point; gpaCr += cr; }
+        });
+        const g43 = gpaCr > 0 ? pts / gpaCr : 0;
+        const g45 = gpaCr > 0 ? convertGpa43To45(g43) : 0;
+        const pct = gpaCr > 0 ? convertGpa43ToPct(g43) : 0;
+
+        document.getElementById("semModalKpi").innerHTML = `
+          <div class="sem-kpi-mini">수강 과목 / 학점<strong>${items.length}과목 · ${crSum}학점</strong></div>
+          <div class="sem-kpi-mini">학기 평점 (4.3 만점)<strong>${g43.toFixed(2)} / 4.30</strong></div>
+          <div class="sem-kpi-mini">4.5 환산 · 백분율<strong>${g45.toFixed(2)} (${pct.toFixed(1)}점)</strong></div>
+        `;
+        document.getElementById("semModalCourseList").innerHTML = renderCourseDetailItems(items);
+      }
+
+      document.getElementById("btnSemSummary").addEventListener("click", () => {
+        const cur = (state.semFilter && state.semFilter !== "all") ? state.semFilter : "1-1";
+        renderSemModal(cur);
+        document.getElementById("semModalBackdrop").classList.add("open");
+      });
+      document.getElementById("semModalPills").addEventListener("click", (e) => {
+        const pill = e.target.closest(".sem-pill[data-sem]");
+        if (pill) renderSemModal(pill.dataset.sem);
+      });
+      document.getElementById("btnApplySemFilter").addEventListener("click", () => {
+        state.semFilter = activeModalSem;
+        document.getElementById("semFilter").value = activeModalSem;
+        saveState();
+        renderCourseSections(computeMetrics());
+        document.getElementById("semModalBackdrop").classList.remove("open");
+      });
+      (() => {
+        const b = document.getElementById("semModalBackdrop");
+        if (!b) return;
+        const close = () => b.classList.remove("open");
+        document.getElementById("btnCloseSemModal").addEventListener("click", close);
+        document.getElementById("btnOkSemModal").addEventListener("click", close);
+        b.addEventListener("click", (e) => { if (e.target === b) close(); });
+      })();
+
       window.__gradApp = {
         applyRemoteState: (remoteState) => {
           try {
@@ -2757,6 +3308,8 @@
       const modal = document.getElementById("cloudModalBackdrop");
       const txtCfg = document.getElementById("fFirebaseConfig");
       const infoEl = document.getElementById("cloudAccountInfo");
+
+      if (!badge || !btnAuth || !btnConfig || !modal) return;
 
       let currentUser = null;
       let fbAuth = null;
