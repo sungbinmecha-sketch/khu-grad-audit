@@ -925,6 +925,16 @@
     }
 
     .toast.show { opacity: 1; transform: translateY(0); }
+    .cloud-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 600;
+      background: #f1f5f9; color: #475569; border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .cloud-badge.online { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+    .cloud-badge.syncing { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .cloud-badge.error { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+    .cloud-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
     .empty-state {
       padding: 16px;
@@ -976,6 +986,9 @@
         </div>
 
         <div class="btn-group">
+          <span class="cloud-badge" id="cloudSyncBadge" title="클라우드 동기화 상태"><span class="cloud-dot"></span><span id="cloudSyncText">로컬 모드</span></span>
+          <button type="button" class="btn" id="btnCloudAuth">클라우드 로그인</button>
+          <button type="button" class="btn" id="btnCloudConfig" title="Firebase 설정 입력">⚙ 설정</button>
           <button type="button" class="btn" id="btnExport">JSON 백업</button>
           <button type="button" class="btn" id="btnImport">복원</button>
           <input type="file" id="fileImport" accept="application/json,.json" hidden />
@@ -1218,6 +1231,38 @@
       <div class="modal-footer">
         <button type="button" class="btn" id="btnCancelReset">취소</button>
         <button type="button" class="btn btn-danger" id="btnConfirmReset">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cloud Sync Config Modal -->
+  <div class="modal-backdrop" id="cloudModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="cloudModalTitle">
+    <div class="modal" style="max-width:500px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="cloudModalTitle">Firebase 클라우드 동기화 설정</h2>
+        <button type="button" class="btn btn-sm" id="btnCloseCloudModal">닫기</button>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.55; margin-bottom:10px;">
+        Firebase 콘솔(<strong>웹 앱 등록</strong>)에서 복사한 <code>firebaseConfig</code> 코드 전체 또는 JSON을 아래에 그대로 붙여넣으세요. 한 번 저장하면 코드 수정 없이 Google 로그인으로 기기 간 자동 동기화됩니다.
+      </div>
+      <div id="cloudAccountInfo" style="font-size:12px; padding:8px 10px; border-radius:8px; background:#f8fafc; border:1px solid var(--border); margin-bottom:10px; color:var(--khu-navy);">
+        연결된 설정이 없습니다.
+      </div>
+      <div class="form-field">
+        <label for="fFirebaseConfig">firebaseConfig 붙여넣기</label>
+        <textarea id="fFirebaseConfig" rows="7" style="width:100%; padding:8px 10px; border:1px solid var(--border-strong); border-radius:8px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; line-height:1.45; resize:vertical;" placeholder='const firebaseConfig = {
+  apiKey: "AIza...",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project",
+  appId: "1:123456:web:abcdef"
+};'></textarea>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between; margin-top:12px;">
+        <button type="button" class="btn btn-danger btn-sm" id="btnClearCloudConfig">설정 삭제</button>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn" id="btnCancelCloudModal">취소</button>
+          <button type="button" class="btn btn-primary" id="btnSaveCloudConfig">저장 및 연결</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1709,6 +1754,7 @@
       function saveState() {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          if (window.syncToCloud) window.syncToCloud(state);
         } catch (e) {}
       }
 
@@ -2645,6 +2691,7 @@
             if (!parsed || !Array.isArray(parsed.courses)) throw new Error("Invalid");
             localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
             state = loadState();
+            saveState();
             renderAll();
             showToast("백업 데이터를 복원했습니다.");
           } catch (err) {
@@ -2673,7 +2720,225 @@
         showToast("초기 상태로 되돌렸습니다.");
       });
 
+      window.__gradApp = {
+        applyRemoteState: (remoteState) => {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteState));
+          } catch (e) {}
+          state = loadState();
+          renderAll();
+        },
+        getState: () => state,
+        toast: (msg) => showToast(msg)
+      };
+
       renderAll();
+    })();
+  </script>
+  <script type="module">
+    (function () {
+      const CFG_KEY = "khu_me_grad_audit_firebase_cfg";
+      const badge = document.getElementById("cloudSyncBadge");
+      const badgeText = document.getElementById("cloudSyncText");
+      const btnAuth = document.getElementById("btnCloudAuth");
+      const btnConfig = document.getElementById("btnCloudConfig");
+      const modal = document.getElementById("cloudModalBackdrop");
+      const txtCfg = document.getElementById("fFirebaseConfig");
+      const infoEl = document.getElementById("cloudAccountInfo");
+
+      let currentUser = null;
+      let fbAuth = null;
+      let fbDb = null;
+      let fbMod = null;
+      let saveTimer = null;
+
+      function setStatus(mode, text) {
+        badge.className = "cloud-badge" + (mode ? " " + mode : "");
+        badgeText.textContent = text;
+      }
+
+      function toast(msg) {
+        if (window.__gradApp && window.__gradApp.toast) window.__gradApp.toast(msg);
+      }
+
+      function loadConfig() {
+        try {
+          const raw = localStorage.getItem(CFG_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function saveConfig(cfg) {
+        try {
+          if (cfg) localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+          else localStorage.removeItem(CFG_KEY);
+        } catch (e) {}
+      }
+
+      function parseConfigInput(raw) {
+        const text = String(raw || "").trim();
+        if (!text) return null;
+        try {
+          const direct = JSON.parse(text);
+          if (direct && direct.apiKey && direct.projectId) return direct;
+        } catch (e) {}
+        const keys = ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId", "measurementId"];
+        const out = {};
+        keys.forEach((k) => {
+          const m = text.match(new RegExp(`["']?${k}["']?\s*:\s*["']([^"']+)["']`));
+          if (m && m[1]) out[k] = m[1].trim();
+        });
+        if (!out.apiKey || !out.projectId || !out.authDomain) return null;
+        return out;
+      }
+
+      function updateModalInfo(cfg) {
+        if (!cfg) {
+          infoEl.textContent = "연결된 Firebase 설정이 없습니다.";
+          return;
+        }
+        const acct = currentUser ? `로그인됨: ${currentUser.email}` : "설정 저장됨 (로그인 필요)";
+        infoEl.textContent = `프로젝트: ${cfg.projectId} · ${acct}`;
+      }
+
+      function openModal() {
+        const cfg = loadConfig();
+        txtCfg.value = cfg ? JSON.stringify(cfg, null, 2) : "";
+        updateModalInfo(cfg);
+        modal.classList.add("open");
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+      }
+
+      async function initFirebase(cfg) {
+        if (!cfg) {
+          setStatus("", "로컬 모드");
+          btnAuth.textContent = "클라우드 로그인";
+          return false;
+        }
+        try {
+          setStatus("syncing", "연결 중...");
+          const [appLib, authLib, fsLib] = await Promise.all([
+            import("https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js"),
+            import("https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js"),
+            import("https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js")
+          ]);
+          fbMod = { ...appLib, ...authLib, ...fsLib };
+          const existing = fbMod.getApps().find((a) => a.name === "khuGradAudit");
+          const app = existing || fbMod.initializeApp(cfg, "khuGradAudit");
+          fbAuth = fbMod.getAuth(app);
+          fbDb = fbMod.getFirestore(app);
+
+          fbMod.onAuthStateChanged(fbAuth, async (user) => {
+            currentUser = user;
+            updateModalInfo(loadConfig());
+            if (!user) {
+              btnAuth.textContent = "Google 로그인";
+              setStatus("", "로그인 필요");
+              return;
+            }
+            btnAuth.textContent = "로그아웃";
+            setStatus("syncing", "불러오는 중...");
+            try {
+              const ref = fbMod.doc(fbDb, "users", user.uid, "apps", "khu-grad-audit");
+              const snap = await fbMod.getDoc(ref);
+              if (snap.exists() && snap.data() && snap.data().state) {
+                window.__gradApp.applyRemoteState(snap.data().state);
+                setStatus("online", "동기화됨");
+                toast(`${user.email} 데이터를 불러왔습니다.`);
+              } else {
+                await fbMod.setDoc(ref, { state: window.__gradApp.getState(), updatedAt: Date.now() });
+                setStatus("online", "동기화됨");
+                toast("현재 기록을 클라우드에 저장했습니다.");
+              }
+            } catch (err) {
+              setStatus("error", "동기화 오류");
+              toast("클라우드 동기화 중 오류가 발생했습니다. Firestore 규칙을 확인해 주세요.");
+            }
+          });
+          return true;
+        } catch (err) {
+          setStatus("error", "연결 실패");
+          toast("Firebase 연결에 실패했습니다. 설정값을 확인해 주세요.");
+          return false;
+        }
+      }
+
+      window.syncToCloud = (latestState) => {
+        if (!currentUser || !fbDb || !fbMod) return;
+        setStatus("syncing", "저장 중...");
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(async () => {
+          try {
+            const ref = fbMod.doc(fbDb, "users", currentUser.uid, "apps", "khu-grad-audit");
+            await fbMod.setDoc(ref, { state: latestState, updatedAt: Date.now() });
+            setStatus("online", "동기화됨");
+          } catch (err) {
+            setStatus("error", "저장 오류");
+          }
+        }, 800);
+      };
+
+      btnConfig.addEventListener("click", openModal);
+      document.getElementById("btnCloseCloudModal").addEventListener("click", closeModal);
+      document.getElementById("btnCancelCloudModal").addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      document.getElementById("btnSaveCloudConfig").addEventListener("click", async () => {
+        const parsed = parseConfigInput(txtCfg.value);
+        if (!parsed) {
+          toast("유효한 firebaseConfig 형식이 아닙니다. apiKey, authDomain, projectId를 확인해 주세요.");
+          return;
+        }
+        saveConfig(parsed);
+        closeModal();
+        const ok = await initFirebase(parsed);
+        if (ok) toast("Firebase 설정을 저장했습니다. Google 로그인을 눌러 주세요.");
+      });
+
+      document.getElementById("btnClearCloudConfig").addEventListener("click", async () => {
+        saveConfig(null);
+        currentUser = null;
+        fbAuth = null;
+        fbDb = null;
+        setStatus("", "로컬 모드");
+        btnAuth.textContent = "클라우드 로그인";
+        txtCfg.value = "";
+        updateModalInfo(null);
+        closeModal();
+        toast("Firebase 설정을 삭제하고 로컬 모드로 전환했습니다.");
+      });
+
+      btnAuth.addEventListener("click", async () => {
+        const cfg = loadConfig();
+        if (!cfg) {
+          openModal();
+          toast("먼저 Firebase 설정값을 입력해 주세요.");
+          return;
+        }
+        if (!fbAuth || !fbMod) {
+          const ok = await initFirebase(cfg);
+          if (!ok) return;
+        }
+        try {
+          if (currentUser) {
+            await fbMod.signOut(fbAuth);
+            toast("로그아웃했습니다.");
+          } else {
+            await fbMod.signInWithPopup(fbAuth, new fbMod.GoogleAuthProvider());
+          }
+        } catch (err) {
+          setStatus("error", "로그인 실패");
+          toast("Google 로그인에 실패했습니다. 승인된 도메인에 GitHub Pages 주소를 추가했는지 확인해 주세요.");
+        }
+      });
+
+      const savedCfg = loadConfig();
+      if (savedCfg) initFirebase(savedCfg);
     })();
   </script>
 </body>
