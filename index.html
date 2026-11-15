@@ -2787,7 +2787,7 @@
         const keys = ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId", "measurementId"];
         const out = {};
         keys.forEach((k) => {
-          const m = text.match(new RegExp(`["']?${k}["']?\s*:\s*["']([^"']+)["']`));
+          const m = text.match(new RegExp('["\']?' + k + '["\']?\\s*:\\s*["\']([^"\']+)["\']'));
           if (m && m[1]) out[k] = m[1].trim();
         });
         if (!out.apiKey || !out.projectId || !out.authDomain) return null;
