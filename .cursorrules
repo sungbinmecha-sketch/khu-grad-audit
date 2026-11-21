@@ -1,0 +1,1 @@
+앞으로 이 프로젝트에서 코드 수정이나 UI 개편 요청을 처리한 뒤에는, 별도 지시가 없더라도 작업 마무리 단계에서 항상 `git status` 를 확인하고 변경된 파일을 `git add .`, `git commit -m "변경 요약"`, `git push -u origin main` 명령어로 자동 배포한다.
